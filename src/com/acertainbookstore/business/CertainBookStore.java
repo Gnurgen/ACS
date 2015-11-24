@@ -337,12 +337,6 @@ public class CertainBookStore implements BookStore, StockManager {
 	@Override
 	public synchronized void rateBooks(Set<BookRating> bookRating)
 			throws BookStoreException {
-		try {
-			Thread.sleep(35000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		for(BookRating br : bookRating){
 			if(!bookMap.containsKey(br.getISBN())){
 				throw new BookStoreException(BookStoreConstants.ISBN + br.getISBN() + BookStoreConstants.INVALID);
