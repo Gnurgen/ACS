@@ -1,0 +1,170 @@
+\documentclass{article}
+\usepackage{times}
+\usepackage{balance}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage[amsmath,thmmarks]{ntheorem}
+\usepackage{mathrsfs}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}              % code insert
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\id}{\textrm{id}}
+\newcommand{\pr}{\mathrm{pr}}
+\newcommand{\N}{\mathbb{N}}
+
+
+\newtheorem{thm}[equation]{Theorem}
+\newtheorem{lem}[equation]{Lemma}
+\newtheorem{prop}[equation]{Proposition}
+\newtheorem{cor}[equation]{Corollary}
+\newtheorem{conj}[equation]{Conjecture}
+
+\theoremstyle{plain}
+\theorembodyfont{\normalfont}
+\newtheorem{defn}[equation]{Definition}
+\newtheorem{ex}[equation]{Example}
+\newtheorem{claim}[equation]{Claim}
+
+\theoremstyle{nonumberplain}
+\theoremheaderfont{\normalfont\bfseries}
+\theorembodyfont{\normalfont}
+\theoremsymbol{\ensuremath{\square}}
+\theoremseparator{.}
+\newtheorem{proof}{Proof}
+
+
+\pagestyle{plain}
+
+\begin{document}
+
+\title{Advanced Computer Systems \\ Assignment 1}
+
+\author{Anna Sofie Kiehn and Kenneth Jürgensen}
+
+\maketitle
+
+\section{Fundamental Abststractions}
+
+\subsection{Technique}
+
+We use a table for keeping track of the mapping between the addresses and machines. Each machine knows from which memory block in the combined memory its memory starts from, and subtracts this amount from the memory address to get the local memory address. If a computer leaves, the memory blocks that machine covers will become invalid, and any attempt to read or write to these memory blocks will result in segmentation fault, however read or write to memory blocks that are still covered by working machine will work fine. The system will be scalable in that new machines are just added to the end of the machine table.
+Writes lock all memory blocks written to before writing, locking out both read and writes, and release them after writing.
+
+\subsection{Pseudocode and API}
+
+The API exports the following functions:
+
+\begin{itemize}
+
+\item \textbf{bool WRITE(address, data)} Writes the data to the address. If the memory block of the address is locked, indicating it is curently being written to by another process, it will return false indicating no data has been writen. If it is not locked the data is written and the functions returns true to indicate this.
+
+\item \textbf{data READ(address)} Reads the data at the given address. If the memory block is locked then the function waits for the memory blocks to be released before reading the data and returning it.
+
+\end{itemize}
+Pseudo-code:
+
+\begin{lstlisting}
+bool WRITE(address,data) =
+	machine, startblock = lookup(address)
+	machineaddress = address - startblock
+	if machine.islocked(machineaddress)
+		return false
+	else
+		machine.writelock(machineaddress)
+		machine.write(machineaddress, data)
+		machine.writeunlock(machineaddress)
+		return true
+	
+data READ(address) = 
+	machines, startblock = lookup(address)
+	machineaddress = address - startblock
+	if machine.locked(machineaddress)
+		machine.wait(machineaddress)
+		machine.readlock(machineaddress)
+		readdata = machine.read(machineaddress)
+		machine.readunlock(machineaddress)
+		return readdata
+	else
+		return machine.read(machineaddress)
+\end{lstlisting}
+We assume that the operating system keeps track of allocating and releasing memory before writing, and if data spans more than one block the operating system will split it into single writes of one block each.
+
+\subsection{READ/WRITE}
+Read and write should be atomic, as otherwise if two processes are writing to the same block, one might overwrite the other, or worse they both end up writing half their data each to the block, corrupting the data. We achieved this atomicity by using read/write locks to lock the memory block from other reads and writes when writing to it, and locking the block from writes when reading from it.
+
+
+\subsection{Assumptions on number of mashines}
+Our naming scheme, being a lookup table, does not allow for dynamic joins and leaves. Instead if a machine leaves, the memory blocks that it covers become invalid, and any read/write request on those blocks will result in segmentation fault. 
+
+\section{Techniques for Performance}
+
+\subsection{Concurencys influence on latency}
+
+It is possible to improve latency using concurency. Latency is the delay between the input to the system and the following change in output, this prosess can be devided into stages and the performance of some of these steps can be improved by concurency. In theory this could improve performance with a factor n, but this is usually not possible in practice as concurent executed programs often need to communicate and this removes some of the improvement concurency gives.
+
+\subsection{Dallying vs. batching}
+
+Dallying is delaying a task on the chance that a subsequent task will render it unnecessary to perform. For example if the task is to delete some memory by overwriting it with zeros, if another task is received to overwrite that memory with other data, then the deletion task is unnecessary. \\
+Batching is gathering up several tasks and performing them all at once, paying the overhead once for the batch instead of once for each task.
+
+\subsection{Fast optimization}
+
+Yes, by caching the result of frequent requests, those requests can be serviced faster than the slow path where the result has to be calculated first. This creates a slow path where the result has to be cached for infrequent requests, and a fast path where the result is already cached for frequent requests.
+
+\section{Discussion of Architecture}
+
+\subsection{Short description of tests}
+
+We have made unit test for all three methods, testing the functionality using both expected input and incorrect input.
+We have implemented all-or-nothing semantics by checking the validity of the arguments to the methods as the first ting. That way we ensure that in the case of incorrect arguments no updates are carried out. 
+We tested the all-or-nothing semantics by checking that no updates was made if the method was called using incorrect arguments. 
+
+We have used the same tests to both local calls and when using RPC only switching the \verb|localTest| variable from true (local calls) to false (RPC). The tests are equally successful, but when using RPC the test run noticably slower, but that was expected. 
+
+\subsection{Strong modularity in the achitecture}
+
+The architecture is modular in the sense that it is possible to implement several different methods of communication without having to change the interface. 
+Also the bookstore and stockmanager interfaces ensures that when the client holds an implementation of the bookstore interface they are limited to a small subset of the overall functionality, ensuring they can not delete or add new books. Similarly when holding a stockmanager one can not buy books from the store, but delete and add new books.
+If running the tests locally in the same JVM, the same isolation between bookstores and stockmanagers still hold, although the tests could use a certainbookstore object that contains all the functionality of both interfaces if needed, but the tests we wrote use the stockmanager and bookstore respectively.
+
+\subsection{Naming service in the architecture}
+
+We can see two naming services in the architecture. First when a client sends a request to the service, the name of the server must first be resolved to an address. Second when the request is received by the server, the messagehandler will translate the messagetag to the function being called.
+
+\subsection{RPC semantics}
+
+In the architecture use the at-most-once RPC semantics, which can be seen as we only make one call to the server, getting either a responce or a timeout.
+It makes sence to use this type of semantic as a client of a bookstore isn't interested in buying for instance 3 copies of the same book, because of some error. However using exactly-once sematics would be very expencive and not nessesarry in a bookstore, where a message telleing the client something when wrong will work fine. 
+
+\subsection{Proxy servers}
+
+Proxy servers could be used to handle the unpacking of the http requests, make the thread-safe method call to the jetty server and have the proxy pack up the response and send it to the client. This way, all the heavy work of packing and unpacking RPC's in http can be done by by various proxies and the jetty server can handle the actual bookstore calls. These proxy servers would be between the jetty server and the BookStoreHTTPProxy and StockManagerHTTPProxy to improve load distribution and let the jetty server focus on the bookstore calls.
+
+\subsection{Bottelneck}
+
+There are two apparent bottlenecks. First that there is only one jetty server. The proxies might reduce the work load of the jetty server drasticly, but since it is only one server then it will eventually be overwhelmed with increasing number of clients. Second, since the threads that use the jetty server with synchronous calls, and multiple concurrent reads are not yet implemented, the scalability is limited.
+
+
+\subsection{In case of crash}
+
+They would time out just as they would without proxies. If the request to the server is cached by the proxy server, the proxy server could response with the cached result and not have to contact the jetty server, so the client would not know that the jetty server has crashed. No it would not change the semantics.
+
+
+%\begin{claim}
+%This is really fun!
+%\end{claim}
+
+%\begin{proof}
+%Since
+%\begin{equation} \label{eq1}
+%a + b + c = d
+%\end{equation}
+%it follows that equation~\eqref{eq1} is a fun equation.
+%\end{proof}
+
+
+\end{document}
