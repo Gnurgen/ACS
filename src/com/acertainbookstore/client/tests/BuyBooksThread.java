@@ -6,13 +6,13 @@ import com.acertainbookstore.business.BookCopy;
 import com.acertainbookstore.interfaces.BookStore;
 import com.acertainbookstore.utils.BookStoreException;
 
-public class BookStoreThread implements Runnable{
+public class BuyBooksThread implements Runnable{
 
 	private BookStore bookstore;
 	private Set<BookCopy> books;
 	private int iterations;
 	
-	public BookStoreThread(BookStore bookstore, Set<BookCopy> books, int iterations){
+	public BuyBooksThread(BookStore bookstore, Set<BookCopy> books, int iterations){
 		this.bookstore = bookstore;
 		this.books = books;
 		this.iterations = iterations;

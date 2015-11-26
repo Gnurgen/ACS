@@ -7,13 +7,13 @@ import com.acertainbookstore.utils.BookStoreException;
 import com.acertainbookstore.business.BookCopy;
 import com.acertainbookstore.business.StockBook;
 
-public class StockManagerThread implements Runnable{
+public class AddCopiesThread implements Runnable{
 
 	private StockManager storemanager;
 	private Set<BookCopy> books;
 	private int iterations;
 	
-	public StockManagerThread(StockManager storemanager, Set<BookCopy> books, int iterations){
+	public AddCopiesThread(StockManager storemanager, Set<BookCopy> books, int iterations){
 		this.storemanager = storemanager;
 		this.books = books;
 		this.iterations = iterations;

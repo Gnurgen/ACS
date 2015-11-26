@@ -478,5 +478,4 @@ public class BookStoreTest {
 			((StockManagerHTTPProxy) storeManager).stop();
 		}
 	}
-
 }

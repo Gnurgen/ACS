@@ -79,7 +79,9 @@ public class ConcurrencyTest {
 	@Test
 	public void test1() throws BookStoreException, InterruptedException{
 		Set<StockBook> booksToAdd = new HashSet<StockBook>();
-		int initialStock = 2000;
+		int initialStock = 20000;
+		int copies = 5;
+		int iterations = 2000;
 		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 1,
 				"This is the book!", "A. Writer", (float) 300,
 				initialStock, 0, 0, 0, false));
@@ -113,19 +115,19 @@ public class ConcurrencyTest {
 		storeManager.addBooks(booksToAdd);
 		
 		Set<BookCopy> books = new HashSet<BookCopy>();
-		books.add(new BookCopy(TEST_ISBN+1, 5));
-		books.add(new BookCopy(TEST_ISBN+2, 5));
-		books.add(new BookCopy(TEST_ISBN+3, 5));
-		books.add(new BookCopy(TEST_ISBN+4, 5));
-		books.add(new BookCopy(TEST_ISBN+5, 5));
-		books.add(new BookCopy(TEST_ISBN+6, 5));
-		books.add(new BookCopy(TEST_ISBN+7, 5));
-		books.add(new BookCopy(TEST_ISBN+8, 5));
-		books.add(new BookCopy(TEST_ISBN+9, 5));
-		books.add(new BookCopy(TEST_ISBN+10, 5));
+		books.add(new BookCopy(TEST_ISBN+1, copies));
+		books.add(new BookCopy(TEST_ISBN+2, copies));
+		books.add(new BookCopy(TEST_ISBN+3, copies));
+		books.add(new BookCopy(TEST_ISBN+4, copies));
+		books.add(new BookCopy(TEST_ISBN+5, copies));
+		books.add(new BookCopy(TEST_ISBN+6, copies));
+		books.add(new BookCopy(TEST_ISBN+7, copies));
+		books.add(new BookCopy(TEST_ISBN+8, copies));
+		books.add(new BookCopy(TEST_ISBN+9, copies));
+		books.add(new BookCopy(TEST_ISBN+10, copies));
 
-		Thread c1 = new Thread(new BookStoreThread(client, books, 2000));
-		Thread c2 = new Thread(new StockManagerThread(storeManager, books, 2000));
+		Thread c1 = new Thread(new BuyBooksThread(client, books, iterations));
+		Thread c2 = new Thread(new AddCopiesThread(storeManager, books, iterations));
 		
 		c1.start();
 		c2.start();
@@ -144,10 +146,86 @@ public class ConcurrencyTest {
 		for (StockBook b : storeManager.getBooks()) {
 			if(b.getNumCopies() != initialStock) {
 				result = false;
+				System.out.println(b.getTitle() + " was wrong");
 				break searching;
 			}
 		}
 		assertTrue(result);
+	}
+	
+	@Test
+	public void test2() throws BookStoreException, InterruptedException{
+		Set<StockBook> booksToAdd = new HashSet<StockBook>();
+		int initialStock = 50000;
+		int copies = 10;
+		int iterations = 2000;
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 1,
+				"This is the book!", "A. Writer", (float) 300,
+				initialStock, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 2,
+				"Is this a book?", "Writer, Some", (float) 2,
+				initialStock, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 3,
+				"Studies confirm this is indeed a book...", "B.N. Writer", (float) 900,
+				initialStock, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 4,
+				"Star Wars, collection", "G. Lucas", (float) 1000,
+				initialStock, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 5,
+				"A Game of Thrones", "G. R. R., Martin", (float) 100,
+				initialStock, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 6,
+				"The Wheel of Time, collection", "J. O. Rigney", (float) 100,
+				initialStock, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 7,
+				"The Name of the Wind", "P. Rothfuss", (float) 150,
+				initialStock, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 8,
+				"Harry Potter, collection", "J.K. Rowling", (float) 150,
+				initialStock, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 9,
+				"The Lord of the Rings, collection", "J.R.R. Tolkien", (float) 550,
+				initialStock, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 10,
+				"The C programming language", "B. Kernighan and D. Ritchie", (float) 50,
+				initialStock, 0, 0, 0, false));
+		storeManager.addBooks(booksToAdd);
+		
+		Set<BookCopy> books = new HashSet<BookCopy>();
+		books.add(new BookCopy(TEST_ISBN+1, copies));
+		books.add(new BookCopy(TEST_ISBN+2, copies));
+		books.add(new BookCopy(TEST_ISBN+3, copies));
+		books.add(new BookCopy(TEST_ISBN+4, copies));
+		books.add(new BookCopy(TEST_ISBN+5, copies));
+		books.add(new BookCopy(TEST_ISBN+6, copies));
+		books.add(new BookCopy(TEST_ISBN+7, copies));
+		books.add(new BookCopy(TEST_ISBN+8, copies));
+		books.add(new BookCopy(TEST_ISBN+9, copies));
+		books.add(new BookCopy(TEST_ISBN+10, copies));
+
+		Set<Integer> isbns = new HashSet<Integer>();
+		isbns.add(TEST_ISBN+1);
+		isbns.add(TEST_ISBN+2);
+		isbns.add(TEST_ISBN+3);
+		isbns.add(TEST_ISBN+4);
+		isbns.add(TEST_ISBN+5);
+		isbns.add(TEST_ISBN+6);
+		isbns.add(TEST_ISBN+7);
+		isbns.add(TEST_ISBN+8);
+		isbns.add(TEST_ISBN+9);
+		isbns.add(TEST_ISBN+10);
+		
+		Result result = new Result();
+		Thread c1 = new Thread(new BuyBooksAddCopiesThread(storeManager,client, books, iterations));
+		Thread c2 = new Thread(new GetBooksThread(storeManager, result, isbns, iterations, initialStock, initialStock - copies));
+		
+		c1.start();
+		c2.start();
+		
+		c1.join();
+		c2.join();
+		
+		assertTrue(result.getErrors() == 0);
 	}
 	
 	@AfterClass
@@ -156,6 +234,23 @@ public class ConcurrencyTest {
 		if (!localTest) {
 			((BookStoreHTTPProxy) client).stop();
 			((StockManagerHTTPProxy) storeManager).stop();
+		}
+	}
+	
+public class Result {
+		
+		private int errors;
+		
+		public Result(){
+			errors = 0;
+		}
+		
+		public void addError(){
+			errors++;
+		}
+		
+		public int getErrors(){
+			return errors;
 		}
 	}
 }
