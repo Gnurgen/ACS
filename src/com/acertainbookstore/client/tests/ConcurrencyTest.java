@@ -15,9 +15,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.acertainbookstore.business.Book;
 import com.acertainbookstore.business.BookCopy;
-import com.acertainbookstore.business.BookRating;
 import com.acertainbookstore.business.CertainBookStore;
 import com.acertainbookstore.business.ImmutableStockBook;
 import com.acertainbookstore.business.StockBook;
@@ -32,7 +30,7 @@ public class ConcurrencyTest {
 
 	private static final int TEST_ISBN = 3044560;
 	private static final int NUM_COPIES = 5;
-	private static boolean localTest = true;
+	private static boolean localTest = false;
 	private static StockManager storeManager;
 	private static BookStore client;
 
@@ -97,8 +95,78 @@ public class ConcurrencyTest {
 
 
 	@Test
-	public void test1(){
+	public void test1() throws BookStoreException, InterruptedException{
+		Set<StockBook> booksToAdd = new HashSet<StockBook>();
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 1,
+				"This is the book!", "A. Writer", (float) 300,
+				20, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 2,
+				"Is this a book?", "Writer, Some", (float) 2,
+				20, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 3,
+				"Studies confirm this is indeed a book...", "B.N. Writer", (float) 900,
+				20, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 4,
+				"Star Wars, collection", "G. Lucas", (float) 1000,
+				20, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 5,
+				"A Game of Thrones", "G. R. R., Martin", (float) 100,
+				20, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 6,
+				"The Wheel of Time, collection", "J. O. Rigney", (float) 100,
+				20, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 7,
+				"The Name of the Wind", "P. Rothfuss", (float) 150,
+				20, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 8,
+				"Harry Potter, collection", "J.K. Rowling", (float) 150,
+				20, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 9,
+				"The Lord of the Rings, collection", "J.R.R. Tolkien", (float) 550,
+				20, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 10,
+				"The C programming language", "B. Kernighan and D. Ritchie", (float) 50,
+				20, 0, 0, 0, false));
+		storeManager.addBooks(booksToAdd);
+		System.out.println(booksToAdd.size());
 		
+		Set<BookCopy> books = new HashSet<BookCopy>();
+		books.add(new BookCopy(TEST_ISBN+1, 5));
+		books.add(new BookCopy(TEST_ISBN+2, 5));
+		books.add(new BookCopy(TEST_ISBN+3, 5));
+		books.add(new BookCopy(TEST_ISBN+4, 5));
+		books.add(new BookCopy(TEST_ISBN+5, 5));
+		books.add(new BookCopy(TEST_ISBN+6, 5));
+		books.add(new BookCopy(TEST_ISBN+7, 5));
+		books.add(new BookCopy(TEST_ISBN+8, 5));
+		books.add(new BookCopy(TEST_ISBN+9, 5));
+		books.add(new BookCopy(TEST_ISBN+10, 5));
+
+		Thread c1 = new Thread(new BookStoreThread(client, books, 20));
+		Thread c2 = new Thread(new StockManagerThread(storeManager, books, 20));
+		
+		c1.start();
+		c2.start();
+		
+		c1.join();
+		c2.join();
+		
+		List<StockBook> bookResult = storeManager.getBooks();
+		System.out.println(bookResult.size());
+		
+		if(bookResult.size() !=10){
+			fail();
+		}
+		
+		boolean result = true;
+		searching:
+		for (StockBook b : storeManager.getBooks()) {
+			if(b.getNumCopies() != 20) {
+				result = false;
+				break searching;
+			}
+		}
+		assertTrue(result);
 	}
 	
 	@AfterClass
