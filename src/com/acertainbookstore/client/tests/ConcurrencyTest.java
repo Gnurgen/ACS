@@ -16,7 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.acertainbookstore.business.BookCopy;
-import com.acertainbookstore.business.CertainBookStore;
+import com.acertainbookstore.business.ConcurrentCertainBookStore;
 import com.acertainbookstore.business.ImmutableStockBook;
 import com.acertainbookstore.business.StockBook;
 import com.acertainbookstore.client.BookStoreHTTPProxy;
@@ -42,7 +42,7 @@ public class ConcurrencyTest {
 			localTest = (localTestProperty != null) ? Boolean
 					.parseBoolean(localTestProperty) : localTest;
 			if (localTest) {
-				CertainBookStore store = new CertainBookStore();
+				ConcurrentCertainBookStore store = new ConcurrentCertainBookStore();
 				storeManager = store;
 				client = store;
 			} else {
@@ -134,10 +134,6 @@ public class ConcurrencyTest {
 		c2.join();
 		
 		List<StockBook> bookResult = storeManager.getBooks();
-		System.out.println(bookResult.size());
-		for(StockBook b : bookResult){
-			System.out.println(b.getTitle());
-		}
 		
 		if(bookResult.size() !=10){
 			fail();
