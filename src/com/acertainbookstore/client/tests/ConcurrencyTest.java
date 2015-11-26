@@ -66,24 +66,6 @@ public class ConcurrencyTest {
 		booksToAdd.add(book);
 		storeManager.addBooks(booksToAdd);
 	}
-	
-	/**
-	 * Helper method to get the default book used by initializeBooks
-	 */
-	public StockBook getDefaultBook() {
-		return new ImmutableStockBook(TEST_ISBN, "Harry Potter and JUnit",
-				"JK Unit", (float) 10, NUM_COPIES, 0, 0, 0, false);
-	}
-
-	/**
-	 * Method to add a book, executed before every test case is run
-	 */
-	@Before
-	public void initializeBooks() throws BookStoreException {
-		Set<StockBook> booksToAdd = new HashSet<StockBook>();
-		booksToAdd.add(getDefaultBook());
-		storeManager.addBooks(booksToAdd);
-	}
 
 	/**
 	 * Method to clean up the book store, execute after every test case is run
@@ -97,38 +79,38 @@ public class ConcurrencyTest {
 	@Test
 	public void test1() throws BookStoreException, InterruptedException{
 		Set<StockBook> booksToAdd = new HashSet<StockBook>();
+		int initialStock = 2000;
 		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 1,
 				"This is the book!", "A. Writer", (float) 300,
-				20, 0, 0, 0, false));
+				initialStock, 0, 0, 0, false));
 		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 2,
 				"Is this a book?", "Writer, Some", (float) 2,
-				20, 0, 0, 0, false));
+				initialStock, 0, 0, 0, false));
 		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 3,
 				"Studies confirm this is indeed a book...", "B.N. Writer", (float) 900,
-				20, 0, 0, 0, false));
+				initialStock, 0, 0, 0, false));
 		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 4,
 				"Star Wars, collection", "G. Lucas", (float) 1000,
-				20, 0, 0, 0, false));
+				initialStock, 0, 0, 0, false));
 		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 5,
 				"A Game of Thrones", "G. R. R., Martin", (float) 100,
-				20, 0, 0, 0, false));
+				initialStock, 0, 0, 0, false));
 		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 6,
 				"The Wheel of Time, collection", "J. O. Rigney", (float) 100,
-				20, 0, 0, 0, false));
+				initialStock, 0, 0, 0, false));
 		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 7,
 				"The Name of the Wind", "P. Rothfuss", (float) 150,
-				20, 0, 0, 0, false));
+				initialStock, 0, 0, 0, false));
 		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 8,
 				"Harry Potter, collection", "J.K. Rowling", (float) 150,
-				20, 0, 0, 0, false));
+				initialStock, 0, 0, 0, false));
 		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 9,
 				"The Lord of the Rings, collection", "J.R.R. Tolkien", (float) 550,
-				20, 0, 0, 0, false));
+				initialStock, 0, 0, 0, false));
 		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 10,
 				"The C programming language", "B. Kernighan and D. Ritchie", (float) 50,
-				20, 0, 0, 0, false));
+				initialStock, 0, 0, 0, false));
 		storeManager.addBooks(booksToAdd);
-		System.out.println(booksToAdd.size());
 		
 		Set<BookCopy> books = new HashSet<BookCopy>();
 		books.add(new BookCopy(TEST_ISBN+1, 5));
@@ -142,8 +124,8 @@ public class ConcurrencyTest {
 		books.add(new BookCopy(TEST_ISBN+9, 5));
 		books.add(new BookCopy(TEST_ISBN+10, 5));
 
-		Thread c1 = new Thread(new BookStoreThread(client, books, 20));
-		Thread c2 = new Thread(new StockManagerThread(storeManager, books, 20));
+		Thread c1 = new Thread(new BookStoreThread(client, books, 2000));
+		Thread c2 = new Thread(new StockManagerThread(storeManager, books, 2000));
 		
 		c1.start();
 		c2.start();
@@ -153,6 +135,9 @@ public class ConcurrencyTest {
 		
 		List<StockBook> bookResult = storeManager.getBooks();
 		System.out.println(bookResult.size());
+		for(StockBook b : bookResult){
+			System.out.println(b.getTitle());
+		}
 		
 		if(bookResult.size() !=10){
 			fail();
@@ -161,7 +146,7 @@ public class ConcurrencyTest {
 		boolean result = true;
 		searching:
 		for (StockBook b : storeManager.getBooks()) {
-			if(b.getNumCopies() != 20) {
+			if(b.getNumCopies() != initialStock) {
 				result = false;
 				break searching;
 			}
