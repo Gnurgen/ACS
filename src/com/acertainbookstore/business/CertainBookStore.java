@@ -31,8 +31,9 @@ public class CertainBookStore implements BookStore, StockManager {
 		// Constructors are not synchronized
 		bookMap = new HashMap<Integer, BookStoreBook>();
 	}
-
-	public synchronized void addBooks(Set<StockBook> bookSet)
+	
+	// Synchronize!
+	public void addBooks(Set<StockBook> bookSet)
 			throws BookStoreException {
 
 		if (bookSet == null) {
@@ -65,7 +66,8 @@ public class CertainBookStore implements BookStore, StockManager {
 		return;
 	}
 
-	public synchronized void addCopies(Set<BookCopy> bookCopiesSet)
+	// Synchronize!
+	public void addCopies(Set<BookCopy> bookCopiesSet)
 			throws BookStoreException {
 		int ISBN, numCopies;
 
@@ -98,7 +100,8 @@ public class CertainBookStore implements BookStore, StockManager {
 		}
 	}
 
-	public synchronized List<StockBook> getBooks() {
+	// Synchronize!
+	public List<StockBook> getBooks() {
 		List<StockBook> listBooks = new ArrayList<StockBook>();
 		Collection<BookStoreBook> bookMapValues = bookMap.values();
 		for (BookStoreBook book : bookMapValues) {
@@ -107,7 +110,8 @@ public class CertainBookStore implements BookStore, StockManager {
 		return listBooks;
 	}
 
-	public synchronized void updateEditorPicks(Set<BookEditorPick> editorPicks)
+	// Synchronize!
+	public void updateEditorPicks(Set<BookEditorPick> editorPicks)
 			throws BookStoreException {
 		// Check that all ISBNs that we add/remove are there first.
 		if (editorPicks == null) {
@@ -133,7 +137,8 @@ public class CertainBookStore implements BookStore, StockManager {
 		return;
 	}
 
-	public synchronized void buyBooks(Set<BookCopy> bookCopiesToBuy)
+	// Synchronize!
+	public void buyBooks(Set<BookCopy> bookCopiesToBuy)
 			throws BookStoreException {
 		if (bookCopiesToBuy == null) {
 			throw new BookStoreException(BookStoreConstants.NULL_INPUT);
@@ -177,7 +182,8 @@ public class CertainBookStore implements BookStore, StockManager {
 		return;
 	}
 
-	public synchronized List<StockBook> getBooksByISBN(Set<Integer> isbnSet)
+	// Synchronize!
+	public List<StockBook> getBooksByISBN(Set<Integer> isbnSet)
 			throws BookStoreException {
 		if (isbnSet == null) {
 			throw new BookStoreException(BookStoreConstants.NULL_INPUT);
@@ -200,7 +206,8 @@ public class CertainBookStore implements BookStore, StockManager {
 		return listBooks;
 	}
 
-	public synchronized List<Book> getBooks(Set<Integer> isbnSet)
+	// Synchronize!
+	public List<Book> getBooks(Set<Integer> isbnSet)
 			throws BookStoreException {
 		if (isbnSet == null) {
 			throw new BookStoreException(BookStoreConstants.NULL_INPUT);
@@ -224,7 +231,8 @@ public class CertainBookStore implements BookStore, StockManager {
 		return listBooks;
 	}
 
-	public synchronized List<Book> getEditorPicks(int numBooks)
+	// Synchronize!
+	public List<Book> getEditorPicks(int numBooks)
 			throws BookStoreException {
 		if (numBooks < 0) {
 			throw new BookStoreException("numBooks = " + numBooks
@@ -274,8 +282,9 @@ public class CertainBookStore implements BookStore, StockManager {
 
 	}
 
+	// Synchronize!
 	@Override
-	public synchronized List<Book> getTopRatedBooks(int numBooks)
+	public List<Book> getTopRatedBooks(int numBooks)
 			throws BookStoreException {
 		if(numBooks < 1) {
 			throw new BookStoreException(BookStoreConstants.INVALID_NUM);
@@ -314,12 +323,13 @@ public class CertainBookStore implements BookStore, StockManager {
 		return result;
 	}
 
+	// Synchronize!
 	/*
 	 * Does not throw any errors, as an empty bookstore is the same
 	 * as no books in demand.
 	 */
 	@Override
-	public synchronized List<StockBook> getBooksInDemand()
+	public List<StockBook> getBooksInDemand()
 			throws BookStoreException {
 		ArrayList<BookStoreBook> temp = new ArrayList<BookStoreBook>();
 		for(BookStoreBook b : bookMap.values()){
@@ -334,8 +344,9 @@ public class CertainBookStore implements BookStore, StockManager {
 		return result;
 	}
 
+	// Synchronize!
 	@Override
-	public synchronized void rateBooks(Set<BookRating> bookRating)
+	public void rateBooks(Set<BookRating> bookRating)
 			throws BookStoreException {
 		for(BookRating br : bookRating){
 			if(!bookMap.containsKey(br.getISBN())){
@@ -350,11 +361,13 @@ public class CertainBookStore implements BookStore, StockManager {
 		}
 	}
 
-	public synchronized void removeAllBooks() throws BookStoreException {
+	// Synchronize!
+	public void removeAllBooks() throws BookStoreException {
 		bookMap.clear();
 	}
 
-	public synchronized void removeBooks(Set<Integer> isbnSet)
+	// Synchronize!
+	public void removeBooks(Set<Integer> isbnSet)
 			throws BookStoreException {
 
 		if (isbnSet == null) {
