@@ -57,22 +57,87 @@ The precedence graphs for schedule 1 and schedule 2 can be seen in Figure 1.
 \begin{figure}[h]
     \centering
     \includegraphics[width=14cm]{graph}
-    \caption{Precedence graph for schedule 1 and schedule 2}
+    \caption{Precedence graphs for schedule 1 and schedule 2}
 \end{figure} 
 
 As can be seen in the graphs, schedule 1 cannot be syncronized as there is a cycle in the graph. Schedule 2 can be syncronized as it contains no cycle. 
 
 \subsection{Can the schedules be generated using strict 2PL}
 
+To see if the schedules can be generated using strict 2PL we insert the nessesary locks into the schedules, wich can be seen in Figure \ref{fig:schedule1_withlocks} and Figure \ref{fig:schedule2_withlocks}.
+In \ref{fig:schedule1_withlocks} we see that when T2 tries to accuire and exclusive lock on X (marked with red in the figure) it has to wait till T1 that alredy has a shared lock on X, finished. This however breaks with the schedule as we see T2 should finish before T1. Schedule 1 therefore could not be generated using strict 2PL. 
+In schedule 2 no problems arrise when adding the locks, since T3 finished before T2 need to accuire the shared lock on Z, and T1 finishes before T2 needs the lock on X and Y. So schedule 2 could be generated using strict 2PL. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=14cm]{schedule1_withlocks}
+    \caption{Schedule 1 with locks insterted, S() denotes shared locks, X() denotes explicive locks. In T2 attempt of accuiring the exclusive lock on X that breaks with strict 2PL is shown in red. }
+    \label{fig:schedule1_withlocks}
+\end{figure} 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=14cm]{schedule2_withlocks}
+    \caption{Schedule 2 with locks insterted, S() denotes shared locks, X() denotes explicive locks.}
+    \label{fig:schedule2_withlocks}
+\end{figure} 
+
 \section{Optimistic Concurrency Control}
+In order to see wether T3 are allowed to commit or has to roll back, we write the test for each senario and see if they succeeds or fails. 
 
 \subsection{Scenario 1}
 
+In this senario T3 is not allowed to commit. The reason is that the last check in the test, the union of WS(T2) and RS(T3) is not empty but contain the element $\{4\}$.
+
+\begin{lstlisting}[mathescape]
+Test:
+   Check that T1 completes before T3 begins
+   Check that T2 completes before T3 begins Write phase
+   Check that WS(T2) $\cap$ RS(T3) = $\varnothing$
+\end{lstlisting}
+
 \subsection{Scenario 2}
+
+T3 is not allowed to commit since the third check in the test, the union of WS(T1) and RS(T3) fails, as the set is not empty but contains the element $\{3\}$.
+\begin{lstlisting}[mathescape]
+Test:
+   Check that T1 completes before T3 begins Write phase
+   Check that T2 completes Read phase before T3 completes Read phase
+   Check that WS(T1) $\cap$ RS(T3) = $\varnothing$
+   Check that WS(T2) $\cap$ RS(T3) = $\varnothing$
+\end{lstlisting}
 
 \subsection{Scenario 3}
 
+All checks are possitive so T3 is allowed to commit. 
+
+\begin{lstlisting}[mathescape]
+Test:
+   Check that T1 completes before T3 begins Write phase
+   Check that T2 completes before T3 begins Write phase
+   Check that WS(T1) $\cap$ RS(T3) = $\varnothing$
+   Check that WS(T2) $\cap$ RS(T3) = $\varnothing$
+\end{lstlisting}
+
 \section{Programming task}
 
+\subsection{Short description of implementation and test}
+We have used the \verb|ReentrantReadWriteLock| class to implement our locking scheme. 
+
+\subsubsection{Strategy}
+
+Each method only takes one lock and only releases it after it is completey done with the work it has to do. We validate input first, before 
+
+%If we use read lock to first read the data and releases that to get a write %lock to update the data we could have ended up with 
+
+\subsubsection{Correctness}
+
+\subsection{Correctness of protocol}
+
+\subsection{Deadlocks}
+
+\subsection{Scalability bottlenecks}
+
+\subsection{Overhead}
 
 \end{document}
