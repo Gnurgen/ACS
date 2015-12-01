@@ -145,9 +145,9 @@ Deadlocks are not possible in our implementation. Each method only holds one loc
 Because we have used blocking to implement cuncurency there is a scalability bottelneck in regards to the number of clients (transactions), when the transactions begin to conflict and block each. 
 When the number of active transactions increase so will the amount of blocking and therefore the amount of delay, which means that throughput will increse more slowly than the number of active transactions. 
 In our implementation, we keep locks for a relatively long periode of time and we lock the entire hashmap so the likelyhood of transactions having to wait is fairly big.
-If we instead had used a concurrent hashmap (from the java.util.concurrent library) we could have locked smaller parts of the map and enabled both concurrent reads and writes, if the writes was on different parts of the data. This would have made the implementation much more scalable.
-
+If we instead had only locked smaller parts of hashmap, for instance by using a concurrent hashmap (from the java.util.concurrent library) we could have supported both concurrent reads and writes - if the writes was on different parts of the data. This would have made the implementation much more scalable.
 
 \subsection{Overhead}
+
 
 \end{document}
