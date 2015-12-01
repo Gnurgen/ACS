@@ -126,17 +126,23 @@ We have used the \verb|ReentrantReadWriteLock| class to implement our locking sc
 
 \subsubsection{Strategy}
 
-Each method only takes one lock and only releases it after it is completey done with the work it has to do. We validate input first, before 
-
-%If we use read lock to first read the data and releases that to get a write %lock to update the data we could have ended up with 
+We acquire a read lock just before validating the input in the methods that are read only, and release it right after reading the result. In the methods that write to the book store map, we acquire a write lock just before validating the input, and hold the lock until the data has been written to the book store. In every method, if an exception is thrown then the held lock is released befre throwing the esception.
 
 \subsubsection{Correctness}
 
+Since we only hold one lock at any point in any method, and that lock is released just before exiting the method, whether through throwing an exception or returning a result, there is not much that can go wrong wih the implementation. This approach makes dirty read and writes impossible, as a method that writes can not be interrupted between validating its input and writing its data. We implemented the test  2 described in the assignment text to test that before-after-atomicity holds up for out implementation, and that no dirty reads happen. Since we validate all input before writing anything, dirty writes are impossible too.
+
 \subsection{Correctness of protocol}
+
+Our implementation adheres to strict two-phase locking. 
 
 \subsection{Deadlocks}
 
+Deadlocks are not possible in our implementation. Each method only holds one lock, either a read or a write, and a deadlock requires waiting to acquire one or more locks while holding one or more locks. Since each calll to the book store can at most be a series of calls, no thread can hold more than one lock, and that lock will be released before acquiring another, assuring deadlocks are impossible.
+
 \subsection{Scalability bottlenecks}
+
+
 
 \subsection{Overhead}
 
