@@ -150,6 +150,6 @@ In our implementation, we keep locks for a relatively long periode of time and w
 If we instead had only locked smaller parts of hashmap, for instance by using a concurrent hashmap (from the java.util.concurrent library) we could have supported both concurrent reads and writes - if the writes was on different parts of the data. This would have made the implementation much more scalable but the locking protocol more complex.
 
 \subsection{Overhead}
-
+The amount of concurrency we get depends on wether there is mostly reads or mostly writes in the application. If there are mostly writes there is practically no concurrency, but we still have the overhead due to locking and unlocking. However there is mostly reads or even just some reads the concurrency vs the overhead is pretty good.
 
 \end{document}
