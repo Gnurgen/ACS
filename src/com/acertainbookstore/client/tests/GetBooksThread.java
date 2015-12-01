@@ -35,20 +35,24 @@ public class GetBooksThread implements Runnable{
 	@Override
 	public void run() {
 		try {
-			List<StockBook> books = stockmanager.getBooksByISBN(isbns);
-			if(books.get(0).getNumCopies() == beforeStock){
-				for(StockBook b : books){
-					if(b.getNumCopies() != beforeStock){
-						result.addError();
+			int counter = 0;
+			while(counter < iterations){
+				List<StockBook> books = stockmanager.getBooksByISBN(isbns);
+				if(books.get(0).getNumCopies() == beforeStock){
+					for(StockBook b : books){
+						if(b.getNumCopies() != beforeStock){
+							result.addError();
+						}
 					}
 				}
-			}
-			else {
-				for(StockBook b : books){
-					if(b.getNumCopies() != afterStock){
-						result.addError();
+				else {
+					for(StockBook b : books){
+						if(b.getNumCopies() != afterStock){
+							result.addError();
+						}
 					}
 				}
+				counter++;
 			}
 		} catch (BookStoreException e) {
 			e.printStackTrace();
