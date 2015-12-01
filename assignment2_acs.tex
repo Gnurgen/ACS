@@ -122,7 +122,7 @@ Test:
 \section{Programming task}
 
 \subsection{Short description of implementation and test}
-We have used the \verb|ReentrantReadWriteLock| class to implement our locking scheme.
+We have used the \verb|ReentrantReadWriteLock| class to implement our locking scheme. When running the test on our machines with non-local tests, it takes roughly 2-3 minutes. The local tests uses millions of requests to meassure the performance, and those are therefore the most accurate tests. As jetty adds a lot of overhead when using HTTP, and the non-local tests are scaled down versions of the local tests, these are more to show that it works, but the performance measurements are not as precise.
 
 \subsubsection{Strategy}
 

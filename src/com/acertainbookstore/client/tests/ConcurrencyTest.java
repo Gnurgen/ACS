@@ -31,7 +31,7 @@ public class ConcurrencyTest {
 
 	private static final int TEST_ISBN = 3044560;
 	private static final int NUM_COPIES = 5;
-	private static boolean localTest = true;
+	private static boolean localTest = false;
 	private static StockManager storeManager;
 	private static BookStore client;
 	private static StockManager oldStoreManager;
@@ -131,6 +131,9 @@ public class ConcurrencyTest {
 		int initialStock = 20000;
 		int copies = 5;
 		int iterations = 2000;
+		if(!localTest){
+			iterations = 200;
+		}
 		Set<BookCopy> books = setup(initialStock, copies);
 
 		Thread c1 = new Thread(new BuyBooksThread(client, books, iterations));
@@ -165,6 +168,9 @@ public class ConcurrencyTest {
 		int initialStock = 50000;
 		int copies = 10;
 		int iterations = 2000;
+		if(!localTest){
+			iterations = 200;
+		}
 		Set<BookCopy> books = setup(initialStock, copies);
 
 		Set<Integer> isbns = new HashSet<Integer>();
@@ -257,8 +263,8 @@ public class ConcurrencyTest {
 		int initialStock = 20;
 		int copies = 1;
 		if(!localTest){
-			nrThreads = 100;
-			iterations = 50;
+			nrThreads = 10;
+			iterations = 100;
 		}
 		Set<Integer> isbns = new HashSet<Integer>();
 		isbns.add(TEST_ISBN+1);
@@ -296,7 +302,12 @@ public class ConcurrencyTest {
 			}
 			double concurrentTime = (double)(System.currentTimeMillis() - startTime) / 1000.0;
 			results[i] = (double)(nrThreads*iterations)/(double)concurrentTime;
-			writeThreads = writeThreads*10;
+			if(localTest){
+				writeThreads = writeThreads*10;
+			}
+			else {
+				writeThreads += 1;
+			}
 			i++;
 		}
 		System.out.println(results[0]);
