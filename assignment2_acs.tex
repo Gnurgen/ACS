@@ -134,14 +134,22 @@ Since we only hold one lock at any point in any method, and that lock is release
 
 \subsection{Correctness of protocol}
 
+We want to argue that our implementation, is correct by showing it follows the strict 2PL protocol.
+We follow the strict 2PL prtocol in that we:
+\begin{itemize}
+\item Comply with 2PL as we accuire all locks before we do any work, and releases all locks at the same time, having a accuire and release phase. 
+\item We have shared locks for transactions that only reads
+\item We have exclusive locks for transactions that writes. 
+\end{itemize}
 
+2PL is vulnerable when it comes to predicate reads, but since we lock the entire hashmap each time writes happen, predicate reads cannot happen. 
 
 \subsection{Deadlocks}
 
 Deadlocks are not possible in our implementation. Each method only holds one lock, either a read or a write, and a deadlock requires waiting to acquire one or more locks while holding one or more locks. Since each calll to the book store can at most be a series of calls, no thread can hold more than one lock, and that lock will be released before acquiring another, assuring deadlocks are impossible.
 
 \subsection{Scalability bottlenecks}
-%Our implementation adheres to strict two-phase locking. 
+
 Because we have used blocking to implement cuncurency there is a scalability bottelneck in regards to the number of clients (transactions), when the transactions begin to conflict and block each. 
 When the number of active transactions increase so will the amount of blocking and therefore the amount of delay, which means that throughput will increse more slowly than the number of active transactions. 
 In our implementation, we keep locks for a relatively long periode of time and we lock the entire hashmap so the likelyhood of transactions having to wait is fairly big.
