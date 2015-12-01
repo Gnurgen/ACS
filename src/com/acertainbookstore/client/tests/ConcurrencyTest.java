@@ -31,7 +31,7 @@ public class ConcurrencyTest {
 
 	private static final int TEST_ISBN = 3044560;
 	private static final int NUM_COPIES = 5;
-	private static boolean localTest = false;
+	private static boolean localTest = true;
 	private static StockManager storeManager;
 	private static BookStore client;
 	private static StockManager oldStoreManager;
@@ -194,10 +194,14 @@ public class ConcurrencyTest {
 	
 	@Test
 	public void test3() throws BookStoreException, InterruptedException{
-		int nrThreads = 10;
-		int iterations = 1000000;
+		int nrThreads = 1000;
+		int iterations = 10000;
 		int initialStock = 20000;
 		int copies = 5;
+		if(!localTest){
+			nrThreads = 100;
+			iterations = 50;
+		}
 		Thread[] threads = new Thread[nrThreads];
 		Set<Integer> isbns = new HashSet<Integer>();
 		isbns.add(TEST_ISBN+1);
@@ -214,7 +218,7 @@ public class ConcurrencyTest {
 		setup(initialStock, copies);
 		int n = 0;
 		while(n < nrThreads){
-			threads[n] = new Thread(new GetBooksThread(oldStoreManager, new Result(), isbns, iterations, initialStock, initialStock));
+			threads[n] = new Thread(new GetBooksThread(storeManager, new Result(), isbns, iterations, initialStock, initialStock));
 			n++;
 		}
 		long startTime = System.currentTimeMillis();
@@ -224,11 +228,11 @@ public class ConcurrencyTest {
 		for(Thread t : threads){
 			t.join();
 		}
-		double oldTime = (double)(System.currentTimeMillis() - startTime) / 1000.0;
-		double oldThroughput = (double)(nrThreads*iterations)/oldTime;
+		double concurrentTime = (double)(System.currentTimeMillis() - startTime) / 1000.0;
+		double concurrentThroughput = (double)(nrThreads*iterations)/(double)concurrentTime;
 		n = 0;
 		while(n < nrThreads){
-			threads[n] = new Thread(new GetBooksThread(storeManager, new Result(), isbns, iterations, initialStock, initialStock));
+			threads[n] = new Thread(new GetBooksThread(oldStoreManager, new Result(), isbns, iterations, initialStock, initialStock));
 			n++;
 		}
 		startTime = System.currentTimeMillis();
@@ -238,11 +242,68 @@ public class ConcurrencyTest {
 		for(Thread t : threads){
 			t.join();
 		}
-		double concurrentTime = (double)(System.currentTimeMillis() - startTime) / 1000.0;
-		double concurrentThroughput = (double)(nrThreads*iterations)/(double)concurrentTime;
+		double oldTime = (double)(System.currentTimeMillis() - startTime) / 1000.0;
+		double oldThroughput = (double)(nrThreads*iterations)/oldTime;
 		System.out.println("Old implementation throughput: "+oldThroughput);
 		System.out.println("New implementation throughput: "+concurrentThroughput);
 		assertTrue(concurrentThroughput > oldThroughput);
+	}
+	
+	@Test
+	public void test4() throws BookStoreException, InterruptedException{
+		int nrThreads = 1000;
+		int writeThreads= 1;
+		int iterations = 10000;
+		int initialStock = 20;
+		int copies = 1;
+		if(!localTest){
+			nrThreads = 100;
+			iterations = 50;
+		}
+		Set<Integer> isbns = new HashSet<Integer>();
+		isbns.add(TEST_ISBN+1);
+		isbns.add(TEST_ISBN+2);
+		isbns.add(TEST_ISBN+3);
+		isbns.add(TEST_ISBN+4);
+		isbns.add(TEST_ISBN+5);
+		isbns.add(TEST_ISBN+6);
+		isbns.add(TEST_ISBN+7);
+		isbns.add(TEST_ISBN+8);
+		isbns.add(TEST_ISBN+9);
+		isbns.add(TEST_ISBN+10);
+		
+		Set<BookCopy> books = setup(initialStock, copies);
+		int n;
+		double[] results = new double[4];
+		int i = 0;
+		while(i < 4){
+			Thread[] threads = new Thread[nrThreads+writeThreads];
+			n = 0;
+			while(n < nrThreads){
+				threads[n] = new Thread(new GetBooksThread(storeManager, new Result(), isbns, iterations, initialStock, initialStock));
+				n++;
+			}
+			while(n < nrThreads+writeThreads){
+				threads[n] = new Thread(new AddCopiesThread(storeManager, books, iterations));
+				n++;
+			}
+			long startTime = System.currentTimeMillis();
+			for(Thread t : threads){
+				t.start();
+			}
+			for(Thread t : threads){
+				t.join();
+			}
+			double concurrentTime = (double)(System.currentTimeMillis() - startTime) / 1000.0;
+			results[i] = (double)(nrThreads*iterations)/(double)concurrentTime;
+			writeThreads = writeThreads*10;
+			i++;
+		}
+		System.out.println(results[0]);
+		System.out.println(results[1]);
+		System.out.println(results[2]);
+		System.out.println(results[3]);
+		assertTrue(true);
 	}
 	
 	@AfterClass
