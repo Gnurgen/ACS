@@ -16,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.acertainbookstore.business.BookCopy;
+import com.acertainbookstore.business.CertainBookStore;
 import com.acertainbookstore.business.ConcurrentCertainBookStore;
 import com.acertainbookstore.business.ImmutableStockBook;
 import com.acertainbookstore.business.StockBook;
@@ -33,6 +34,8 @@ public class ConcurrencyTest {
 	private static boolean localTest = false;
 	private static StockManager storeManager;
 	private static BookStore client;
+	private static StockManager oldStoreManager;
+	private static BookStore oldClient;
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
@@ -45,74 +48,27 @@ public class ConcurrencyTest {
 				ConcurrentCertainBookStore store = new ConcurrentCertainBookStore();
 				storeManager = store;
 				client = store;
+				CertainBookStore oldStore= new CertainBookStore();
+				oldStoreManager = oldStore;
+				oldClient = oldStore;
 			} else {
 				storeManager = new StockManagerHTTPProxy(
 						"http://localhost:8081/stock");
 				client = new BookStoreHTTPProxy("http://localhost:8081");
+				oldStoreManager = new StockManagerHTTPProxy(
+						"http://localhost:8082/stock");;
+				oldClient = new BookStoreHTTPProxy("http://localhost:8082");
 			}
 			storeManager.removeAllBooks();
+			oldStoreManager.removeAllBooks();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * Helper method to add some books
-	 */
-	public void addBooks(int isbn, int copies) throws BookStoreException {
-		Set<StockBook> booksToAdd = new HashSet<StockBook>();
-		StockBook book = new ImmutableStockBook(isbn, "Test of Thrones",
-				"George RR Testin'", (float) 10, copies, 0, 0, 0, false);
-		booksToAdd.add(book);
-		storeManager.addBooks(booksToAdd);
-	}
-
-	/**
-	 * Method to clean up the book store, execute after every test case is run
-	 */
-	@After
-	public void cleanupBooks() throws BookStoreException {
-		storeManager.removeAllBooks();
-	}
-
-
-	@Test
-	public void test1() throws BookStoreException, InterruptedException{
-		Set<StockBook> booksToAdd = new HashSet<StockBook>();
-		int initialStock = 20000;
-		int copies = 5;
-		int iterations = 2000;
-		Set<BookCopy> books = setup(booksToAdd, initialStock, copies);
-
-		Thread c1 = new Thread(new BuyBooksThread(client, books, iterations));
-		Thread c2 = new Thread(new AddCopiesThread(storeManager, books, iterations));
-		
-		c1.start();
-		c2.start();
-		
-		c1.join();
-		c2.join();
-		
-		List<StockBook> bookResult = storeManager.getBooks();
-		
-		if(bookResult.size() !=10){
-			fail();
-		}
-		
-		boolean result = true;
-		searching:
-		for (StockBook b : storeManager.getBooks()) {
-			if(b.getNumCopies() != initialStock) {
-				result = false;
-				System.out.println(b.getTitle() + " was wrong");
-				break searching;
-			}
-		}
-		assertTrue(result);
-	}
-
-	public Set<BookCopy> setup(Set<StockBook> booksToAdd, int initialStock,
+	
+	public Set<BookCopy> setup(int initialStock,
 			int copies) throws BookStoreException {
+		Set<StockBook> booksToAdd = new HashSet<StockBook>();
 		booksToAdd.add(new ImmutableStockBook(TEST_ISBN + 1,
 				"This is the book!", "A. Writer", (float) 300,
 				initialStock, 0, 0, 0, false));
@@ -144,6 +100,7 @@ public class ConcurrencyTest {
 				"The C programming language", "B. Kernighan and D. Ritchie", (float) 50,
 				initialStock, 0, 0, 0, false));
 		storeManager.addBooks(booksToAdd);
+		oldStoreManager.addBooks(booksToAdd);
 		
 		Set<BookCopy> books = new HashSet<BookCopy>();
 		books.add(new BookCopy(TEST_ISBN+1, copies));
@@ -158,14 +115,57 @@ public class ConcurrencyTest {
 		books.add(new BookCopy(TEST_ISBN+10, copies));
 		return books;
 	}
+
+	/**
+	 * Method to clean up the book store, execute after every test case is run
+	 */
+	@After
+	public void cleanupBooks() throws BookStoreException {
+		storeManager.removeAllBooks();
+		oldStoreManager.removeAllBooks();
+	}
+
+
+	@Test
+	public void test1() throws BookStoreException, InterruptedException{
+		int initialStock = 20000;
+		int copies = 5;
+		int iterations = 2000;
+		Set<BookCopy> books = setup(initialStock, copies);
+
+		Thread c1 = new Thread(new BuyBooksThread(client, books, iterations));
+		Thread c2 = new Thread(new AddCopiesThread(storeManager, books, iterations));
+		
+		c1.start();
+		c2.start();
+		
+		c1.join();
+		c2.join();
+		
+		List<StockBook> bookResult = storeManager.getBooks();
+		
+		if(bookResult.size() !=10){
+			fail();
+		}
+		
+		boolean result = true;
+		searching:
+		for (StockBook b : storeManager.getBooks()) {
+			if(b.getNumCopies() != initialStock) {
+				result = false;
+				System.out.println(b.getTitle() + " was wrong");
+				break searching;
+			}
+		}
+		assertTrue(result);
+	}
 	
 	@Test
 	public void test2() throws BookStoreException, InterruptedException{
-		Set<StockBook> booksToAdd = new HashSet<StockBook>();
 		int initialStock = 50000;
 		int copies = 10;
 		int iterations = 2000;
-		Set<BookCopy> books = setup(booksToAdd, initialStock, copies);
+		Set<BookCopy> books = setup(initialStock, copies);
 
 		Set<Integer> isbns = new HashSet<Integer>();
 		isbns.add(TEST_ISBN+1);
@@ -190,6 +190,59 @@ public class ConcurrencyTest {
 		c2.join();
 		
 		assertTrue(result.getErrors() == 0);
+	}
+	
+	@Test
+	public void test3() throws BookStoreException, InterruptedException{
+		int nrThreads = 10;
+		int iterations = 1000000;
+		int initialStock = 20000;
+		int copies = 5;
+		Thread[] threads = new Thread[nrThreads];
+		Set<Integer> isbns = new HashSet<Integer>();
+		isbns.add(TEST_ISBN+1);
+		isbns.add(TEST_ISBN+2);
+		isbns.add(TEST_ISBN+3);
+		isbns.add(TEST_ISBN+4);
+		isbns.add(TEST_ISBN+5);
+		isbns.add(TEST_ISBN+6);
+		isbns.add(TEST_ISBN+7);
+		isbns.add(TEST_ISBN+8);
+		isbns.add(TEST_ISBN+9);
+		isbns.add(TEST_ISBN+10);
+		
+		setup(initialStock, copies);
+		int n = 0;
+		while(n < nrThreads){
+			threads[n] = new Thread(new GetBooksThread(oldStoreManager, new Result(), isbns, iterations, initialStock, initialStock));
+			n++;
+		}
+		long startTime = System.currentTimeMillis();
+		for(Thread t : threads){
+			t.start();
+		}
+		for(Thread t : threads){
+			t.join();
+		}
+		double oldTime = (double)(System.currentTimeMillis() - startTime) / 1000.0;
+		double oldThroughput = (double)(nrThreads*iterations)/oldTime;
+		n = 0;
+		while(n < nrThreads){
+			threads[n] = new Thread(new GetBooksThread(storeManager, new Result(), isbns, iterations, initialStock, initialStock));
+			n++;
+		}
+		startTime = System.currentTimeMillis();
+		for(Thread t : threads){
+			t.start();
+		}
+		for(Thread t : threads){
+			t.join();
+		}
+		double concurrentTime = (double)(System.currentTimeMillis() - startTime) / 1000.0;
+		double concurrentThroughput = (double)(nrThreads*iterations)/(double)concurrentTime;
+		System.out.println("Old implementation throughput: "+oldThroughput);
+		System.out.println("New implementation throughput: "+concurrentThroughput);
+		assertTrue(concurrentThroughput > oldThroughput);
 	}
 	
 	@AfterClass
