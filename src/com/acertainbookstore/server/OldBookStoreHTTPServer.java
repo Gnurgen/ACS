@@ -9,6 +9,8 @@ import com.acertainbookstore.server.OldBookStoreHTTPMessageHandler;
 
 /**
  * Starts the bookstore HTTP server that the clients will communicate with.
+ * This is the old server from assignment 1, started on a different port.
+ * Used to test the old implementation against the new.
  */
 public class OldBookStoreHTTPServer {
 

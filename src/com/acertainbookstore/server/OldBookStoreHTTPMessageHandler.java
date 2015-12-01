@@ -30,7 +30,7 @@ import com.acertainbookstore.utils.BookStoreUtility;
  * invoked to handle messages received by the BookStoreHTTPServerUtility. It
  * decodes the HTTP message and invokes the CertainBookStore server API
  * 
- * 
+ * Uses the old CertainBookStore to test against the new implementation.
  */
 public class OldBookStoreHTTPMessageHandler extends AbstractHandler {
 	private CertainBookStore myBookStore = null;
