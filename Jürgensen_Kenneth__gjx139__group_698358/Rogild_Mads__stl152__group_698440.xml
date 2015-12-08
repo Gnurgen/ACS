@@ -87,14 +87,14 @@
         </text>
         <answer>
         You mention that your implementation is similar to how 2PL work, but your
-        explanation describes who your locking implementation works, not how it assures before-or-after atomicity.
+        explanation describes how your locking implementation works, not how it assures before-or-after atomicity.
         Instead of implementing your own locking, you could have used an existing one, for example read/write locks
         from implementing the java.util.concurrent.locks.ReadWriteLock interface.  
         The problem with implementing the locks yourself is that even if you use the locks as one should in 2PL
         if the locks are not implemented correctly it still is not correct.
         In your implementation of locks it is possible for two threads to both take the write lock.
-        Assume there are 2 thereads in the que in the spin lock, then the lock is released.
-        One of the threads (lets call it t1) checks to see if the lock is free wich it is and procedures to take the
+        Assume there are 2 threads in the queue in the spin lock, then the lock is released.
+        One of the threads (lets call it t1) checks to see if the lock is free wich it is and procedes to take the
         lock, but before it takes it the JVM switches threads and the second thread (t2) makes the check. It also sees
         that the lock is free and takes it. Then t1 is switched back and takes the lock (it alredy made the check).
         We now have two threads that both have an exclusive write lock. 
@@ -136,8 +136,19 @@
           tests described in your report.
           When you run your test you don't join on the threads (and therefore don't know when they finished) in
           the test addBuy, and you can therefore not be assured you get the correct result.
-          We could not run your test since a the tests take an argument wich is not allowed. Also we cannot see
-          number of iterations you tests run.
+          We could not run your test since the tests take an argument wich is not allowed in JUnit. Also we cannot see
+          the number of iterations you ran the tests with, but if testWriteLock is any indication at 300 iterations,
+          then this is way too low, as a thread can easily finish 300 iterations before the next thread is started, meaning
+          there is never any concurrent threads.
+          Your test of WriteLock is also wrong. First you only run 300 iterations which is not enough, when testing concurrency
+          run at least 10.000 iterations, preferably 100.000+, and run many threads, like 1000. Second, the thread that writes
+          only runs once, making it kind of useless to even start it as a thread. Thirdly, the check is not of what you think. 
+          You check that the number of books in the bookstore i the same before and after, but you only add copies to those books.
+          You should either have added more books and kept the current test, or added copies in many iterations and tested for the
+          total number of copies. Currently the test can not fail, as it tests for the number of books being the same
+          before and after the test, and none are added at any point during.
+          Actually the third point applies to all tests, none can fail because all tests are of the number of books in the bookstore,
+          but the tests add copies of existing books. Therefore the number of books can never change and the tests can never fail.
         </answer>
       </q1e>
     </question1>
