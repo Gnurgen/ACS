@@ -107,7 +107,13 @@
           improvement
         </text>
         <answer>There was basically no description of the tests, so it was not clear. 
-                Should simply describe each test, what it tests for and how.</answer>
+                Should simply describe each test, what it tests for and how.
+                Also, testConsistency fails. This is because when you check the snapshot you check that it is either
+                the original total amount, or one less because a book has been bought but not yet added by the other thread.
+                However the other thread first adds the copy and then buys the book, so the test should either be that the snapshot
+                should be the original amount or one more as a book has been added but not yet bought or the order of operations in the
+                other thread should be reversed, at which point the test succeeds. Also when testing for concurrency, its a good idea
+                to run more than 100 iterations.</answer>
       </q1e>
     </question1>
 
