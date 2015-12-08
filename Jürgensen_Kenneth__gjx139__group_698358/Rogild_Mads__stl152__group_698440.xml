@@ -89,7 +89,15 @@
         You mention that your implementation is similar to how 2PL work, but your
         explanation describes who your locking implementation works, not how it assures before-or-after atomicity.
         Instead of implementing your own locking, you could have used an existing one, for example read/write locks
-        from java.util.concurrent.locks.ReadWriteLock or a concurrent hashmap (also aldredy implemented).  
+        from implementing the java.util.concurrent.locks.ReadWriteLock interface.  
+        The problem with implementing the locks yourself is that even if you use the locks as one should in 2PL
+        if the locks are not implemented correctly it still is not correct.
+        In your implementation of locks it is possible for two threads to both take the write lock.
+        Assume there are 2 thereads in the que in the spin lock, then the lock is released.
+        One of the threads (lets call it t1) checks to see if the lock is free wich it is and procedures to take the
+        lock, but before it takes it the JVM switches threads and the second thread (t2) makes the check. It also sees
+        that the lock is free and takes it. Then t1 is switched back and takes the lock (it alredy made the check).
+        We now have two threads that both have an exclusive write lock. 
         </answer>
       </q1b>
       <q1c>
@@ -126,10 +134,10 @@
         <answer>
           It would have helped readability if you had written what method names corresponded to the different
           tests described in your report.
-          When you run your test you don't join on the threads (and therefore don't know when they finished).
-          You do check the final state is correct in test 1 (addBuy) but not in test 2 (addBuyGet).
-          The description of the two tests you made yourself is fine, but you don't explain how you test that
-          anomalies dosen't occur.
+          When you run your test you don't join on the threads (and therefore don't know when they finished) in
+          the test addBuy, and you can therefore not be assured you get the correct result.
+          We could not run your test since a the tests take an argument wich is not allowed. Also we cannot see
+          number of iterations you tests run.
         </answer>
       </q1e>
     </question1>
