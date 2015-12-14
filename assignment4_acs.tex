@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage{times}
+\usepackage{balance}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage[amsmath,thmmarks]{ntheorem}
+\usepackage{mathrsfs}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}              % code insert
+\usepackage{graphicx}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\id}{\textrm{id}}
+\newcommand{\pr}{\mathrm{pr}}
+\newcommand{\N}{\mathbb{N}}
+
+
+\newtheorem{thm}[equation]{Theorem}
+\newtheorem{lem}[equation]{Lemma}
+\newtheorem{prop}[equation]{Proposition}
+\newtheorem{cor}[equation]{Corollary}
+\newtheorem{conj}[equation]{Conjecture}
+
+\theoremstyle{plain}
+\theorembodyfont{\normalfont}
+\newtheorem{defn}[equation]{Definition}
+\newtheorem{ex}[equation]{Example}
+\newtheorem{claim}[equation]{Claim}
+
+\theoremstyle{nonumberplain}
+\theoremheaderfont{\normalfont\bfseries}
+\theorembodyfont{\normalfont}
+\theoremsymbol{\ensuremath{\square}}
+\theoremseparator{.}
+\newtheorem{proof}{Proof}
+
+
+\pagestyle{plain}
+
+\begin{document}
+
+\title{Advanced Computer Systems \\ Assignment 4}
+
+\author{Anna Sofie Kiehn and Kenneth Jürgensen}
+
+\maketitle
+
+\section*{Question 1: Recovery Concepts}
+
+\subsection*{1}
+	Since force is implemented there is no need for undo as all changes are written when comitted. 
+
+\subsection*{2}
+	Nonvolatile storage is storage that does not lose data when power is lost, like a harddisk. Stable storage is storage that which in theory can survive any kind of failure. Nonvolatile storage,while it does not lose data on power failure it is still succeptible to data corruption due to partially written data, where as stable storage can use replication of data to rule out corruption. However this replication of data also makes stable storage more computationally expensive than nonvolatile storage.
+
+\end{document}
