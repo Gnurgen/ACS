@@ -10,6 +10,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import com.acertainbookstore.business.Book;
+import com.acertainbookstore.business.BookCopy;
 import com.acertainbookstore.business.ImmutableStockBook;
 import com.acertainbookstore.business.StockBook;
 import com.acertainbookstore.interfaces.BookStore;
@@ -27,11 +29,13 @@ public class Worker implements Callable<WorkerRunResult> {
 	private int numSuccessfulFrequentBookStoreInteraction = 0;
 	private int numTotalFrequentBookStoreInteraction = 0;
 	private StockManager stockManager = null;
+	private BookStore bookStore = null;
 	private BookSetGenerator generator = null;
 
 	public Worker(WorkloadConfiguration config) {
 		configuration = config;
 		stockManager = config.getStockManager();
+		bookStore = config.getBookStore();
 		generator = new BookSetGenerator();
 	}
 
@@ -150,11 +154,22 @@ public class Worker implements Callable<WorkerRunResult> {
                 }
             }
         }
+        Set<BookCopy> booksToAdd = new HashSet<>();
+        for(StockBook b : temp){
+        	BookCopy book = new BookCopy(b.getISBN(), configuration.getNumAddCopies());
+        	booksToAdd.add(book);
+        }
+        stockManager.addCopies(booksToAdd);
 	}
 	
 	private StockBook lowestCopies(List<StockBook> books){
-		return null;
-	}
+	    StockBook result = books.get(0);
+	    for(StockBook b : books){
+	        if(b.getNumCopies() < result.getNumCopies()){
+	            result = b;
+	        }
+	    }
+	    return result;	}
 
 	/**
 	 * Runs the customer interaction
@@ -162,7 +177,20 @@ public class Worker implements Callable<WorkerRunResult> {
 	 * @throws BookStoreException
 	 */
 	private void runFrequentBookStoreInteraction() throws BookStoreException {
-		// TODO: Add code for Customer Interaction
+		List<Book> books = bookStore.getEditorPicks(configuration.getNumEditorPicksToGet());
+		Set<Integer> isbns = new HashSet<Integer>();
+		for (Book b : books){
+			isbns.add(b.getISBN());
+		}
+		
+		Set<Integer> temp = generator.sampleFromSetOfISBNs(isbns, configuration.getNumBookCopiesToBuy());
+		
+		Set<BookCopy> booksToBuy = new HashSet<BookCopy>();
+		for(Integer i : temp){
+			BookCopy b = new BookCopy(i, configuration.getNumBookCopiesToBuy());
+			booksToBuy.add(b);
+		}
+		bookStore.buyBooks(booksToBuy);
 	}
 
 }
