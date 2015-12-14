@@ -3,9 +3,17 @@
  */
 package com.acertainbookstore.client.workloads;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
+import com.acertainbookstore.business.ImmutableStockBook;
+import com.acertainbookstore.business.StockBook;
+import com.acertainbookstore.interfaces.BookStore;
+import com.acertainbookstore.interfaces.StockManager;
 import com.acertainbookstore.utils.BookStoreException;
 
 /**
@@ -18,9 +26,13 @@ public class Worker implements Callable<WorkerRunResult> {
 	private WorkloadConfiguration configuration = null;
 	private int numSuccessfulFrequentBookStoreInteraction = 0;
 	private int numTotalFrequentBookStoreInteraction = 0;
+	private StockManager stockManager = null;
+	private BookSetGenerator generator = null;
 
 	public Worker(WorkloadConfiguration config) {
 		configuration = config;
+		stockManager = config.getStockManager();
+		generator = new BookSetGenerator();
 	}
 
 	/**
@@ -98,7 +110,22 @@ public class Worker implements Callable<WorkerRunResult> {
 	 * @throws BookStoreException
 	 */
 	private void runRareStockManagerInteraction() throws BookStoreException {
-		// TODO: Add code for New Stock Acquisition Interaction
+		List<StockBook> books = stockManager.getBooks();
+		List<Integer> isbns = null;
+		for (StockBook b : books) {
+			isbns.add(b.getISBN());
+		}
+
+		Set<StockBook> randbooks = generator.nextSetOfStockBooks(configuration.getNumBooksToAdd());
+		
+		Set<StockBook> booksToAdd = new HashSet<StockBook>();
+		
+		for (StockBook b : randbooks){
+			if (!isbns.contains(b.getISBN())){
+				booksToAdd.add(b);
+			}
+		}		
+		stockManager.addBooks(booksToAdd);
 	}
 
 	/**
@@ -107,7 +134,12 @@ public class Worker implements Callable<WorkerRunResult> {
 	 * @throws BookStoreException
 	 */
 	private void runFrequentStockManagerInteraction() throws BookStoreException {
-		// TODO: Add code for Stock Replenishment Interaction
+		List<StockBook> books = stockManager.getBooks();
+		
+//		for(StockBook b : books) {
+//			()
+//		}
+		
 	}
 
 	/**
