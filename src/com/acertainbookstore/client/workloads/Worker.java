@@ -136,9 +136,15 @@ public class Worker implements Callable<WorkerRunResult> {
 	private void runFrequentStockManagerInteraction() throws BookStoreException {
 		List<StockBook> books = stockManager.getBooks();
 		
-//		for(StockBook b : books) {
-//			()
-//		}
+		List<StockBook> temp = new LinkedList<>();
+		int lowest = 10000;
+		
+		for(StockBook b : books) {
+			if (b.getNumCopies() < lowest){
+				temp.add(b);
+				
+			}
+		}
 		
 	}
 
