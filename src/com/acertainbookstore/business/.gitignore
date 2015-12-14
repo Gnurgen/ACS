@@ -1,0 +1,10 @@
+/Book.class
+/BookCopy.class
+/BookEditorPick.class
+/BookRating.class
+/BookStoreBook.class
+/CertainBookStore.class
+/ConcurrentCertainBookStore.class
+/ImmutableBook.class
+/ImmutableStockBook.class
+/StockBook.class

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.3.15)  26 NOV 2015 13:03
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.3.15)  1 DEC 2015 20:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -555,29 +555,85 @@ Overfull \hbox (53.33858pt too wide) in paragraph at lines 59--60
  [][] 
  []
 
-\tf@thm=\write3
-\openout3 = `assignment2_acs.thm'.
+<schedule1_withlocks.png, id=3, 773.89125pt x 116.435pt>
+File: schedule1_withlocks.png Graphic file (type png)
+
+<use schedule1_withlocks.png>
+Package pdftex.def Info: schedule1_withlocks.png used on input line 73.
+(pdftex.def)             Requested size: 398.33858pt x 59.93181pt.
+
+Overfull \hbox (53.33858pt too wide) in paragraph at lines 73--74
+ [][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<schedule2_withlocks.png, id=4, 784.9325pt x 124.465pt>
+File: schedule2_withlocks.png Graphic file (type png)
+
+<use schedule2_withlocks.png>
+Package pdftex.def Info: schedule2_withlocks.png used on input line 80.
+(pdftex.def)             Requested size: 398.33858pt x 63.16484pt.
+
+Overfull \hbox (53.33858pt too wide) in paragraph at lines 80--81
+ [][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
 
 [1
 
 {/usr/local/texlive/2013/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./graph
-.png>] [2] (./assignment2_acs.aux) ) 
+.png>]
+Overfull \hbox (63.00415pt too wide) in paragraph at lines 105--106
+[][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[2 <./schedule1_withlocks.png> <./schedule2_withlocks.png>]
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 125.
+
+
+(/usr/local/texlive/2013/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 127.
+ [3]
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 142.
+
+
+(/usr/local/texlive/2013/texmf-dist/tex/latex/psnfss/omsptm.fd
+File: omsptm.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 142.
+ [4]
+\tf@thm=\write3
+\openout3 = `assignment2_acs.thm'.
+
+ [5]
+(./assignment2_acs.aux) ) 
 Here is how much of TeX's memory you used:
- 4491 strings out of 493315
- 60336 string characters out of 6137904
- 121388 words of memory out of 5000000
- 7859 multiletter control sequences out of 15000+600000
- 17293 words of font info for 46 fonts, out of 8000000 for 9000
+ 4832 strings out of 493315
+ 63597 string characters out of 6137904
+ 128404 words of memory out of 5000000
+ 8186 multiletter control sequences out of 15000+600000
+ 21628 words of font info for 61 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 37i,7n,32p,250b,230s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2013/texmf-dist/fonts/e
-nc/dvips/base/8r.enc}</usr/local/texlive/2013/texmf-dist/fonts/type1/urw/times/
-utmb8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/times/utmr8a.pfb
->
-Output written on assignment2_acs.pdf (2 pages, 45491 bytes).
+ 37i,7n,32p,709b,990s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2013/texmf-dist/fonts/enc/dvips/ba
+se/8r.enc}</usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+r10.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy
+10.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/symbols/
+msbm10.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/courier/ucrr8a.p
+fb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/l
+ocal/texlive/2013/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
+Output written on assignment2_acs.pdf (5 pages, 114621 bytes).
 PDF statistics:
- 23 PDF objects out of 1000 (max. 8388607)
- 14 compressed objects within 1 object stream
+ 52 PDF objects out of 1000 (max. 8388607)
+ 32 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
