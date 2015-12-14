@@ -51,9 +51,78 @@
 \section*{Question 1: Recovery Concepts}
 
 \subsection*{1}
-	Since force is implemented there is no need for undo as all changes are written when comitted. 
+	Since force is implemented there is no need for undo as all changes are written when comitted. Since there is no-steal no data is written before it is comitted, and therefore no undo scheme needs to be implemented as there can be no data that is written but not comitted.
 
 \subsection*{2}
 	Nonvolatile storage is storage that does not lose data when power is lost, like a harddisk. Stable storage is storage that which in theory can survive any kind of failure. Nonvolatile storage,while it does not lose data on power failure it is still succeptible to data corruption due to partially written data, where as stable storage can use replication of data to rule out corruption. However this replication of data also makes stable storage more computationally expensive than nonvolatile storage.
+
+\subsection*{3}
+	When the change to the database is to be written to disk, the write-ahead-log must be written to stable storage before the change is written. This is to ensure that no change of the state of the database can happen without being recorded for potential redo/undo in case of a crash.
+
+\section*{Question 2: ARIES}
+
+\subsection*{1}
+\begin{tabular}{| c | c | c |}
+	\hline
+	\multicolumn{3}{|c|}{Transaction table} \\
+	\hline
+	transID & lastLSN & Status\\
+	\hline
+	T1 & 4 & U\\
+	\hline
+	T2 & 9 & U\\
+	\hline
+\end{tabular}
+\begin{tabular}{| c | c |}
+	\hline
+	\multicolumn{2}{|c|}{Dirty page table} \\
+	\hline
+	pageID & recLSN \\
+	\hline
+	P2 & 3 \\
+	\hline
+	P1 & 4 \\
+	\hline
+	P5 & 5 \\
+	\hline
+	P3 & 6 \\
+	\hline
+\end{tabular}
+
+\subsection*{2}
+
+Winners = \{T3\}, losers = \{T1,T2\}.
+
+\subsection*{3}
+Redo phase starts at LSN 3.\\
+Undo phase ends at LSN 3.
+
+\subsection*{4}
+The set of log records that may cause page redos are \{3,4,5,6,8,9\}.
+
+\subsection*{5}
+The set of records that are undone is \{9,8,5,4,3\}.
+
+\subsection*{6}
+\begin{tabular}{ l  l  l  l  l  l }
+	LSN & LAST\_LSN & TRAN\_ID & TYPE & PAGE\_ID & undoNextLSN \\
+	- - - & - - - - - - - - & - - - - - - - & - - - - & - - - - - - - & - - - - - - - - - - - \\
+	1 & - & - & begin CKPT & - & - \\
+	2 & - & - & end CKPT & - & - \\
+	3 & NULL & T1 & update & P2 & - \\
+	4 & 3 & T1 & update & P1 & - \\
+	5 & NULL & T2 & update & P5 & - \\
+	6 & NULL & T3 & update & P3 & - \\
+	7 & 6 & T3 & commit & - & - \\
+	8 & 5 & T2 & update & P5 & - \\
+	9 & 8 & T2 & update & P3 & - \\
+	10 & 6 & T3 & end & - & - \\
+	11 & - & T2 & CLR & P3 & 8 \\
+	12 & - & T2 & CLR & P5 & 5 \\
+	13 & - & T2 & CLR & P5 & NULL \\
+	14 & - & T1 & CLR & P1 & 3 \\
+	15 & - & T1 & CLR & P2 & NULL \\
+\end{tabular}
+
 
 \end{document}
