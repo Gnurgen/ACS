@@ -137,15 +137,23 @@ public class Worker implements Callable<WorkerRunResult> {
 		List<StockBook> books = stockManager.getBooks();
 		
 		List<StockBook> temp = new LinkedList<>();
-		int lowest = 10000;
 		
-		for(StockBook b : books) {
-			if (b.getNumCopies() < lowest){
-				temp.add(b);
-				
-			}
-		}
-		
+        for(StockBook b : books){
+            if(temp.size() < configuration.getNumBooksWithLeastCopies()){
+                temp.add(b);
+            }
+            else {
+                StockBook lowest = lowestCopies(temp);
+                if(b.getAverageRating() > lowest.getAverageRating()){
+                    temp.remove(lowest);
+                    temp.add(b);
+                }
+            }
+        }
+	}
+	
+	private StockBook lowestCopies(List<StockBook> books){
+		return null;
 	}
 
 	/**
