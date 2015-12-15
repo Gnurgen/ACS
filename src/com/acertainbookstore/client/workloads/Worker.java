@@ -115,7 +115,7 @@ public class Worker implements Callable<WorkerRunResult> {
 	 */
 	private void runRareStockManagerInteraction() throws BookStoreException {
 		List<StockBook> books = stockManager.getBooks();
-		List<Integer> isbns = null;
+		List<Integer> isbns = new LinkedList<Integer>();
 		for (StockBook b : books) {
 			isbns.add(b.getISBN());
 		}

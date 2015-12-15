@@ -1,6 +1,5 @@
 package com.acertainbookstore.client.workloads;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -16,7 +15,7 @@ import com.acertainbookstore.business.StockBook;
  * class
  */
 public class BookSetGenerator {
-	
+	private String characters = "abcdefghijklmnopqrstuvwxyz ";
 	
 	public BookSetGenerator() {
 		// TODO Auto-generated constructor stub
@@ -31,7 +30,7 @@ public class BookSetGenerator {
 	public Set<Integer> sampleFromSetOfISBNs(Set<Integer> isbns, int num) {
 		List<Integer> list = new LinkedList<Integer>(isbns);
 		Collections.shuffle(list);
-		Set<Integer> randset = new HashSet<>(list.subList(0, num));
+		Set<Integer> randset = new HashSet<>(list.subList(0, num-1));
 		return randset;
 	}
 
@@ -47,9 +46,9 @@ public class BookSetGenerator {
 		for (int i=1; i<num+1; i++){
 			// get a random 10 digit number
 			int ISBN = r.nextInt(1000000000);
-			String title = "";
+			String title = randomString(10,r);
 			int price = 100+r.nextInt(500);
-			String author = "";
+			String author = randomString(10,r);
 			int numCopies = 1000+r.nextInt(1000);
 			int SaleMisses = 0;
 			int timesRated = 0;
@@ -59,5 +58,13 @@ public class BookSetGenerator {
 			books.add(book);
 		}
 		return books;
+	}
+	
+	private String randomString(int length, Random r){
+		String result = "";
+		for(int i = 0; i < length; i++){
+			result += characters.toCharArray()[r.nextInt(characters.length())];
+		}
+		return result;
 	}
 }

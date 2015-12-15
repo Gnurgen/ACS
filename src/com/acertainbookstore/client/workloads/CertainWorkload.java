@@ -32,7 +32,7 @@ public class CertainWorkload {
 	public static void main(String[] args) throws Exception {
 		int numConcurrentWorkloadThreads = 10;
 		String serverAddress = "http://localhost:8081";
-		boolean localTest = true;
+		boolean localTest = false;
 		List<WorkerRunResult> workerRunResults = new ArrayList<WorkerRunResult>();
 		List<Future<WorkerRunResult>> runResults = new ArrayList<Future<WorkerRunResult>>();
 
@@ -91,8 +91,25 @@ public class CertainWorkload {
 	 * @param workerRunResults
 	 */
 	public static void reportMetric(List<WorkerRunResult> workerRunResults) {
-		System.out.println("WEEEEEEEE!");
-		
+		int totalRuns = 0;
+		int successfulRuns = 0;
+		int totalCostumer = 0;
+		double throughput = 0;
+		double latency = 0;
+		for(WorkerRunResult wrr : workerRunResults){
+			totalRuns += wrr.getTotalRuns();
+			successfulRuns += wrr.getSuccessfulInteractions();
+			totalCostumer += wrr.getSuccessfulFrequentBookStoreInteractionRuns();
+			throughput += (double)wrr.getSuccessfulInteractions()/((double)wrr.getElapsedTimeInNanoSecs()/1000000000);
+			latency += (double)wrr.getElapsedTimeInNanoSecs()/(double)wrr.getSuccessfulInteractions();
+		}
+		latency = latency / (double)workerRunResults.size();
+		latency = latency / 1000000;
+		System.out.println("Number of clients: " + workerRunResults.size());
+		System.out.println("Success rate: " + ((double)successfulRuns/(double)totalRuns)*100 +"%");
+		System.out.println("Costumer interactions: " + (double)totalCostumer/(double)totalRuns*100+"%");
+		System.out.println("Throughput: "+throughput);
+		System.out.println("Latency: " + latency + " ms between each interation");
 	}
 
 	/**
