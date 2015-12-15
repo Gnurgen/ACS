@@ -9,6 +9,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{listings}              % code insert
 \usepackage{graphicx}
+\usepackage{rotating}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
@@ -94,7 +95,8 @@ The U in the transaction table, referes to the transactions needs to be undone.\
 
 \subsection*{2}
 
-As we can in the transaction table above the set of winner transaction is \{T3\}, as this T3 finishes before the crash, the set of losers are \{T1,T2\}, as they are both active when the crash happens.
+As we can see in the transaction table above the set of winner transactions are \{T3\}, as this T3 finishes before the crash, the set of losers are \{T1,T2\}, as they are both active when the crash happens.
+
 
 \subsection*{3}
 Redo phase starts at LSN 3 as that is the smallest recLSN in the dirty page table.\\
@@ -126,13 +128,42 @@ The set of records that are undone is \{9,8,5,4,3\}. The undo phase starts at LS
 	14 & - & T1 & CLR & P1 & 3 \\
 	15 & - & T1 & CLR & P2 & NULL \\
 \end{tabular}
+We were a little unclear about if the records that are undone are removed from the log or if they are kept there, but the CLR record indicates that the record has been rolled back. We think that a log should never delete a record, once something has been logged that information should not be lost, so we show the log with the CLR to indicate that the records have been undone.
 
 \section{Programming task}
 
+
 \subsection{Setup for experiments}
+
+\textbf{Generation of data:}
+We implemented the random generation of books by rolling a random number between 0 and 1 billion as the isbn, to make it very unlikely that two threads wil generate two different books with the same isbn. The number of copies for each book is a random number between 1000 and 2000, the price is a random number between 100 and 600 and the title and author are random 10 character strings consisting of lower case letters and space. Every generated book has 0 in saleMisses, timesRated and totalRating and a random boolean in editorPick. The bookstore is always initiated with 20 books generated this way.\\\\
+\textbf{Hardware:}
+We ran the tests on a macbook with the following specs:
+\begin{itemize}
+	\item OS: OS X Yosemite version 10.10.5
+	\item RAM: 8 Gb 1600 MHz DDR3
+	\item CPU: 2 GHz Intel Core i7
+\end{itemize}
+\textbf{Workload configuration:}
+We configured every worker to get up to 10 editorpicks and chose 5 books from this set to by 1 copy of each book as the client interaction which is run roughly 60\% of the total runs. For the replenishment interaction we chose to add 10 copies to the 5 books with the least copies, which is run about 30\% of the total runs. Finally for the stock acquisition interaction we chose to add 5 new books which is run roughly 10\% of the total runs.
+
 
 \subsection{Plots of throughput and latency}
 
-\subsection{Liability of the matrics}
+Figure 1 shows the throughput at various amounts of concurrent clients when running the test locally and using RPC and figure 2 shows latency at various amounts of concurrent clients when running the test locally and using RPC.
+
+\centering
+\begin{figure}
+	\hspace*{-2.2in}
+	\includegraphics[scale=0.85]{throughput}
+	\caption{Plot of the measurements of throughput}
+\end{figure}
+\begin{figure}
+	\hspace*{-2.2in}
+	\includegraphics[scale=0.85]{latency}
+	\caption{Plot of the measurements of latency}
+\end{figure}
+
+\subsection{Reliability of the metrics}
 
 \end{document}

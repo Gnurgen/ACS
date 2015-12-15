@@ -9,17 +9,15 @@ localLatency = [1.197 2.068 3.301 5.994 8.501 13.068 17.555 21.746 28.534 37.296
 
 figure
 plot(numThreads, rpcLatency, numThreads, localLatency);
-%plot(numThreads, localLatency);
 legend('Latency using rpc','Latency using local');
-xlabel('number of clients');
-ylabel('latency');
+xlabel('Number of clients');
+ylabel('Milliseconds per interaction');
 title('Latency');
 
 figure
 plot(numThreads, rpcThroughput, numThreads, localThroughput);
-%plot(numThreads, localThroughput);
 legend('Throughput using rpc','Throughput using local');
-xlabel('number of clients');
-ylabel('throughput');
+xlabel('Number of clients');
+ylabel('Interactions per second');
 title('Throughput');
 
