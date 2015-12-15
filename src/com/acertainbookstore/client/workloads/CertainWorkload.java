@@ -92,8 +92,14 @@ public class CertainWorkload {
 	 */
 	public static void reportMetric(List<WorkerRunResult> workerRunResults) {
 		// TODO: You should aggregate metrics and output them for plotting here
-		
-		
+		int succ = 0;
+		int timeact  = 0;
+		for(WorkerRunResult r : workerRunResults){
+			succ += r.getSuccessfulInteractions();
+			timeact += r.getTotalRuns();
+		}
+		int latency = 0;
+		int throughput = succ/timeact;
 	}
 
 	/**
