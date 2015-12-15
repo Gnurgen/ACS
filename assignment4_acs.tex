@@ -144,7 +144,8 @@ We ran the tests on a macbook with the following specs:
 	\item CPU: 2 GHz Intel Core i7
 \end{itemize}
 \textbf{Workload configuration:}
-We configured every worker to get up to 10 editorpicks and chose 5 books from this set to by 1 copy of each book as the client interaction which is run roughly 60\% of the total runs. For the replenishment interaction we chose to add 10 copies to the 5 books with the least copies, which is run about 30\% of the total runs. Finally for the stock acquisition interaction we chose to add 5 new books which is run roughly 10\% of the total runs.
+We configured every worker to get up to 10 editorpicks and chose 5 books from this set to by 1 copy of each book as the client interaction which is run roughly 60\% of the total runs. For the replenishment interaction we chose to add 10 copies to the 5 books with the least copies, which is run about 30\% of the total runs. Finally for the stock acquisition interaction we chose to add 5 new books which is run roughly 10\% of the total runs.\\
+For the local tests 100 warm up runs are used and 1000 actual runs are used, and for the RPC tests 10 warm up runs and 100 actual runs are used. This is because the overhead of RPC adds considerable latency, as can be seen in the plots later, which would take hours or more to run, but the workload for each run is the same for either test.
 
 
 \subsection{Plots of throughput and latency}
@@ -164,5 +165,6 @@ Figure 1 shows the throughput at various amounts of concurrent clients when runn
 \end{figure}
 
 \subsection{Reliability of the metrics}
+
 
 \end{document}
