@@ -36,8 +36,7 @@ public class BookSetGenerator {
 
 	/**
 	 * Return num stock books. For now return an ImmutableStockBook
-	 * The new ISBN is randomly generated, wich should result in few clashes with
-	 * existing ISBNs.
+	 * 
 	 * @param num
 	 * @return
 	 */
