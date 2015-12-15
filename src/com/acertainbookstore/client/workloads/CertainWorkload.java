@@ -111,7 +111,6 @@ public class CertainWorkload {
 		System.out.println("Throughput: "+throughput);
 		System.out.println("Latency: " + latency + " ms between each interation");
 	}
-
 	/**
 	 * Generate the data in bookstore before the workload interactions are run
 	 * 
