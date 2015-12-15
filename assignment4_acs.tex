@@ -144,24 +144,29 @@ We ran the tests on a macbook with the following specs:
 \end{itemize}
 \textbf{Workload configuration:}
 We configured every worker to get up to 10 editorpicks and chose 5 books from this set to by 1 copy of each book as the client interaction which is run roughly 60\% of the total runs. For the replenishment interaction we chose to add 10 copies to the 5 books with the least copies, which is run about 30\% of the total runs. Finally for the stock acquisition interaction we chose to add 5 new books which is run roughly 10\% of the total runs.\\
-For the local tests 100 warm up runs are used and 1000 actual runs are used, and for the RPC tests 10 warm up runs and 100 actual runs are used. This is because the overhead of RPC adds considerable latency, as can be seen in the plots later, which would take hours or more to run, but the workload for each run is the same for either test.
+For the local tests 100 warm up runs are used and 1000 actual runs are used, and for the RPC tests 10 warm up runs and 100 actual runs are used. This is because the overhead of RPC adds considerable latency, as can be seen in the plots later, which would take hours or more to run, but the workload for each run is the same for either test.\\
+In the reporting of the metrics, we add up the total number of interactions, the total number of client interactions, the throughput and latency of each worker. All this information is used to validate that the number of client interactions constitute roughly 60% of the total interactions, that more than 99% of the interactions are successful and report the total throughput for all workers and the combined average latency as milliseconds between each interaction.
 
 
 \subsection{Plots of throughput and latency}
 
-Figure 1 shows the throughput at various amounts of concurrent clients when running the test locally and using RPC and figure 2 shows latency at various amounts of concurrent clients when running the test locally and using RPC.
+\textbf{Throughput:}
+Figure 1 shows the throughput at various amounts of concurrent clients when running the test locally and using RPC. Since the number for the local measurements are so much greater than the RPC ones it is hard to see the trends for RPC but they are roughly the same as for the local measurements except smoother due to the overhead RPC adds. From this plot it looks as if the throughput initially increases as the number of clients increases, but at a certain point the number of clients starts to reduce the overall throughput. This is to be expected as initially there will be a gain in throughput as one client will be able to utilize the wasted throughput that could be achieved when another client is not accessing the bookstore. However as more clients are added the potential wasted time from waiting for the bookstore to become available starts to hurt the overall throughput. 
+The plot also shows an outlier in the data for the local measurement at 45 clients. Such outliers can be explained by the machine running the test running other applications in the background that might take up or free resources at various points. Had we run the measurement with an increment at intervals of 1 client instead of 5 the curve would probably have become much smoother and such outliers would stand out less but the time needed to run the measurement would also become much greater.\\
+\textbf{latency}
+ Figure 2 shows the latency at various amounts of concurrent clients when running the test locally and using RPC.
 
-\centering
+{\centering
 \begin{figure}
 	\hspace*{-2.2in}
-	\includegraphics[scale=0.85]{throughput}
+	\includegraphics[scale=0.9]{throughput}
 	\caption{Plot of the measurements of throughput}
 \end{figure}
 \begin{figure}
 	\hspace*{-2.2in}
-	\includegraphics[scale=0.85]{latency}
+	\includegraphics[scale=0.9]{latency}
 	\caption{Plot of the measurements of latency}
-\end{figure}
+\end{figure}}
 
 \subsection{Reliability of the metrics}
 This is a good measure of performance when everything runs as expected, but one thing the measurement is missing is failures. In the real world there will be failures and how well a system responds to and recovers from failures is a big part of overall performance. So one other metric could be to count the number of errors, and maybe calculate the average time between each error.
