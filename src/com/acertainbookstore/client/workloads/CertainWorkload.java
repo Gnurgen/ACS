@@ -100,7 +100,9 @@ public class CertainWorkload {
 		}
 		int latency = 0;
 		int throughput = succ/timeact;
-	}
+
+		System.out.println("WEEEEEEEE!");
+		}
 
 	/**
 	 * Generate the data in bookstore before the workload interactions are run
@@ -110,7 +112,10 @@ public class CertainWorkload {
 	 */
 	public static void initializeBookStoreData(BookStore bookStore,
 			StockManager stockManager) throws BookStoreException {
-		// TODO: You should initialize data for your bookstore here
-
+		if(bookStore == null || stockManager == null){
+			throw new BookStoreException("BookStore or StockManager is null");
+		}
+		BookSetGenerator bsn = new BookSetGenerator();
+		stockManager.addBooks(bsn.nextSetOfStockBooks(20));
 	}
 }
