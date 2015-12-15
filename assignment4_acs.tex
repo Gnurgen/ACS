@@ -94,17 +94,17 @@ The U in the transaction table, referes to the transactions needs to be undone.\
 
 \subsection*{2}
 
-As we can in the transaction table above the set of winner transactions are \{T3\}, as this T3 finishes before the crash, the set of losers are \{T1,T2\}, as they are both active when the crash happens.
+As we can in the transaction table above the set of winner transaction is \{T3\}, as this T3 finishes before the crash, the set of losers are \{T1,T2\}, as they are both active when the crash happens.
 
 \subsection*{3}
-Redo phase starts at LSN 3 .\\
-Undo phase ends at LSN 3.
+Redo phase starts at LSN 3 as that is the smallest recLSN in the dirty page table.\\
+Undo phase ends at LSN 3 as that is the oldest log record of the transactions active at the crash.
 
 \subsection*{4}
 The set of log records that may cause page redos are \{3,4,5,6,8,9\}.
 
 \subsection*{5}
-The set of records that are undone is \{9,8,5,4,3\}.
+The set of records that are undone is \{9,8,5,4,3\}. The undo phase starts at LSN 9 and undos all updates done by the looser transactions. 
 
 \subsection*{6}
 \begin{tabular}{ l  l  l  l  l  l }
