@@ -52,8 +52,8 @@ public class BookSetGenerator {
 			int numCopies = 1000+r.nextInt(1000);
 			int SaleMisses = 0;
 			int timesRated = 0;
-			int totalRating = 0; 
-			boolean editorPick = false;
+			int totalRating = 0;
+			boolean editorPick = r.nextBoolean();
 			StockBook book = new ImmutableStockBook(ISBN, title, author, price, numCopies, SaleMisses, timesRated, totalRating, editorPick);
 			books.add(book);
 		}
