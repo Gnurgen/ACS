@@ -16,8 +16,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import com.acertainbookstore.business.BookCopy;
 import com.acertainbookstore.business.BookEditorPick;
-import com.acertainbookstore.business.BookRating;
-import com.acertainbookstore.business.ConcurrentCertainBookStore;
+import com.acertainbookstore.business.CertainBookStore;
 import com.acertainbookstore.business.StockBook;
 import com.acertainbookstore.utils.BookStoreConstants;
 import com.acertainbookstore.utils.BookStoreException;
@@ -33,9 +32,9 @@ import com.acertainbookstore.utils.BookStoreUtility;
  * 
  */
 public class BookStoreHTTPMessageHandler extends AbstractHandler {
-	private ConcurrentCertainBookStore myBookStore = null;
+	private CertainBookStore myBookStore = null;
 
-	public BookStoreHTTPMessageHandler(ConcurrentCertainBookStore bookStore) {
+	public BookStoreHTTPMessageHandler(CertainBookStore bookStore) {
 		myBookStore = bookStore;
 	}
 
@@ -224,55 +223,6 @@ public class BookStoreHTTPMessageHandler extends AbstractHandler {
 				try {
 					bookStoreResponse.setList(myBookStore
 							.getBooksByISBN(isbnSet));
-				} catch (BookStoreException ex) {
-					bookStoreResponse.setException(ex);
-				}
-				listBooksxmlString = BookStoreUtility
-						.serializeObjectToXMLString(bookStoreResponse);
-				response.getWriter().println(listBooksxmlString);
-				break;
-			
-			case GETTOPRATEDBOOKS:
-				numBooksString = URLDecoder
-						.decode(request
-								.getParameter(BookStoreConstants.BOOK_NUM_PARAM),
-								"UTF-8");
-				bookStoreResponse = new BookStoreResponse();
-				try {
-					numBooks = BookStoreUtility
-							.convertStringToInt(numBooksString);
-					bookStoreResponse.setList(myBookStore
-							.getTopRatedBooks(numBooks));
-				} catch (BookStoreException ex) {
-					bookStoreResponse.setException(ex);
-				}
-				listBooksxmlString = BookStoreUtility
-						.serializeObjectToXMLString(bookStoreResponse);
-				response.getWriter().println(listBooksxmlString);
-				break;
-				
-			case GETBOOKSINDEMAND:
-				bookStoreResponse = new BookStoreResponse();
-				try {
-					bookStoreResponse.setList(myBookStore
-							.getBooksInDemand());
-				} catch (BookStoreException ex) {
-					bookStoreResponse.setException(ex);
-				}listBooksxmlString = BookStoreUtility
-						.serializeObjectToXMLString(bookStoreResponse);
-				response.getWriter().println(listBooksxmlString);
-				break;
-				
-			case RATEBOOKS:
-				xml = BookStoreUtility
-						.extractPOSTDataFromRequest(request);
-
-				Set<BookRating> ratings = (Set<BookRating>) BookStoreUtility
-						.deserializeXMLStringToObject(xml);
-
-				bookStoreResponse = new BookStoreResponse();
-				try {
-					myBookStore.rateBooks(ratings);
 				} catch (BookStoreException ex) {
 					bookStoreResponse.setException(ex);
 				}

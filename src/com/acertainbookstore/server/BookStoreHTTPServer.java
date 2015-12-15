@@ -3,7 +3,7 @@
  */
 package com.acertainbookstore.server;
 
-import com.acertainbookstore.business.ConcurrentCertainBookStore;
+import com.acertainbookstore.business.CertainBookStore;
 import com.acertainbookstore.utils.BookStoreConstants;
 
 /**
@@ -15,7 +15,7 @@ public class BookStoreHTTPServer {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ConcurrentCertainBookStore bookStore = new ConcurrentCertainBookStore();
+		CertainBookStore bookStore = new CertainBookStore();
 		int listen_on_port = 8081;
 		BookStoreHTTPMessageHandler handler = new BookStoreHTTPMessageHandler(
 				bookStore);

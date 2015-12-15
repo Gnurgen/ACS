@@ -22,8 +22,7 @@ import com.acertainbookstore.utils.BookStoreUtility;
 
 /**
  * CertainBookStore implements the bookstore and its functionality which is
- * defined in the BookStore. From assignment 1, used to test the new implementation
- * against the old.
+ * defined in the BookStore
  */
 public class CertainBookStore implements BookStore, StockManager {
 	private Map<Integer, BookStoreBook> bookMap = null;
