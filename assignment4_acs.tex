@@ -100,7 +100,7 @@ As we can see in the transaction table above the set of winner transactions are 
 
 \subsection*{3}
 Redo phase starts at LSN 3 as that is the smallest recLSN in the dirty page table.\\
-Undo phase ends at LSN 3 as that is the oldest log record of the transactions active at the crash.
+Undo phase ends at LSN 3 as that is the oldest log record of the transactions active at the crash and runs backwards through the log, starting from the tail.
 
 \subsection*{4}
 The set of log records that may cause page redos are \{3,4,5,6,8,9\}.
@@ -131,8 +131,6 @@ The set of records that are undone is \{9,8,5,4,3\}. The undo phase starts at LS
 We were a little unclear about if the records that are undone are removed from the log or if they are kept there, but the CLR record indicates that the record has been rolled back. We think that a log should never delete a record, once something has been logged that information should not be lost, so we show the log with the CLR to indicate that the records have been undone.
 
 \section{Programming task}
-
-
 \subsection{Setup for experiments}
 
 \textbf{Generation of data:}
@@ -166,6 +164,6 @@ Figure 1 shows the throughput at various amounts of concurrent clients when runn
 \end{figure}
 
 \subsection{Reliability of the metrics}
-
+This is a good measure of performance when everything runs as expected, but one thing the measurement is missing is failures. In the real world there will be failures and how well a system responds to and recovers from failures is a big part of overall performance. So one other metric could be to count the number of errors, and maybe calculate the average time between each error.
 
 \end{document}
