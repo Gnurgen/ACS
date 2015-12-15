@@ -30,7 +30,7 @@ public class CertainWorkload {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		for(int numConcurrentWorkloadThreads = 10; numConcurrentWorkloadThreads <= 50; numConcurrentWorkloadThreads += 5){
+		for(int numConcurrentWorkloadThreads = 10; numConcurrentWorkloadThreads <= 100; numConcurrentWorkloadThreads += 5){
 			String serverAddress = "http://localhost:8081";
 			boolean localTest = false;
 			List<WorkerRunResult> workerRunResults = new ArrayList<WorkerRunResult>();
@@ -101,7 +101,7 @@ public class CertainWorkload {
 			totalRuns += wrr.getTotalRuns();
 			successfulRuns += wrr.getSuccessfulInteractions();
 			totalCostumer += wrr.getSuccessfulFrequentBookStoreInteractionRuns();
-			throughput += (double)wrr.getSuccessfulInteractions()/((double)wrr.getElapsedTimeInNanoSecs()/1000000000);
+			throughput += (double)wrr.getSuccessfulFrequentBookStoreInteractionRuns()/((double)wrr.getElapsedTimeInNanoSecs()/1000000000);
 			latency += (double)wrr.getElapsedTimeInNanoSecs()/(double)wrr.getSuccessfulInteractions();
 		}
 		latency = latency / (double)workerRunResults.size();

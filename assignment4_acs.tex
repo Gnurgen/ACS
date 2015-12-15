@@ -62,6 +62,9 @@
 \section*{Question 2: ARIES}
 
 \subsection*{1}
+
+Below is the state of the transaction and dirty page tables after the analysis phase.
+The U in the transaction table, referes to the transactions needs to be undone.\\
 \begin{tabular}{| c | c | c |}
 	\hline
 	\multicolumn{3}{|c|}{Transaction table} \\
@@ -91,10 +94,10 @@
 
 \subsection*{2}
 
-Winners = \{T3\}, losers = \{T1,T2\}.
+As we can in the transaction table above the set of winner transactions are \{T3\}, as this T3 finishes before the crash, the set of losers are \{T1,T2\}, as they are both active when the crash happens.
 
 \subsection*{3}
-Redo phase starts at LSN 3.\\
+Redo phase starts at LSN 3 .\\
 Undo phase ends at LSN 3.
 
 \subsection*{4}
@@ -124,5 +127,12 @@ The set of records that are undone is \{9,8,5,4,3\}.
 	15 & - & T1 & CLR & P2 & NULL \\
 \end{tabular}
 
+\section{Programming task}
+
+\subsection{Setup for experiments}
+
+\subsection{Plots of throughput and latency}
+
+\subsection{Liability of the matrics}
 
 \end{document}
