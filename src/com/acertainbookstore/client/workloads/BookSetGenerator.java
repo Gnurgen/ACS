@@ -16,7 +16,8 @@ import com.acertainbookstore.business.StockBook;
  * class
  */
 public class BookSetGenerator {
-
+	
+	
 	public BookSetGenerator() {
 		// TODO Auto-generated constructor stub
 	}
@@ -44,12 +45,12 @@ public class BookSetGenerator {
 		Random r = new Random();
 		Set<StockBook> books = new HashSet<StockBook>();
 		for (int i=1; i<num+1; i++){
-			// get a random 7 digit number
-			int ISBN = (int)((Math.random() * 9000000)+1000000);
+			// get a random 10 digit number
+			int ISBN = r.nextInt(1000000000);
 			String title = "";
-			int price = 0;
+			int price = 100+r.nextInt(500);
 			String author = "";
-			int numCopies = 0;
+			int numCopies = 1000+r.nextInt(1000);
 			int SaleMisses = 0;
 			int timesRated = 0;
 			int totalRating = 0; 
@@ -59,5 +60,4 @@ public class BookSetGenerator {
 		}
 		return books;
 	}
-
 }

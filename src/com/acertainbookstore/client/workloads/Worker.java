@@ -169,7 +169,8 @@ public class Worker implements Callable<WorkerRunResult> {
 	            result = b;
 	        }
 	    }
-	    return result;	}
+	    return result;	
+	}
 
 	/**
 	 * Runs the customer interaction
@@ -192,5 +193,4 @@ public class Worker implements Callable<WorkerRunResult> {
 		}
 		bookStore.buyBooks(booksToBuy);
 	}
-
 }

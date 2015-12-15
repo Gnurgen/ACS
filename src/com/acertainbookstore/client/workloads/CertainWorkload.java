@@ -91,8 +91,7 @@ public class CertainWorkload {
 	 * @param workerRunResults
 	 */
 	public static void reportMetric(List<WorkerRunResult> workerRunResults) {
-		// TODO: You should aggregate metrics and output them for plotting here
-		
+		System.out.println("WEEEEEEEE!");
 		
 	}
 
@@ -104,7 +103,10 @@ public class CertainWorkload {
 	 */
 	public static void initializeBookStoreData(BookStore bookStore,
 			StockManager stockManager) throws BookStoreException {
-		// TODO: You should initialize data for your bookstore here
-
+		if(bookStore == null || stockManager == null){
+			throw new BookStoreException("BookStore or StockManager is null");
+		}
+		BookSetGenerator bsn = new BookSetGenerator();
+		stockManager.addBooks(bsn.nextSetOfStockBooks(20));
 	}
 }
