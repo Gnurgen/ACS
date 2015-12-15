@@ -127,7 +127,7 @@ The set of records that are undone is \{9,8,5,4,3\}. The undo phase starts at LS
 	13 & - & T2 & CLR & P5 & NULL \\
 	14 & - & T1 & CLR & P1 & 3 \\
 	15 & - & T1 & CLR & P2 & NULL \\
-\end{tabular}
+\end{tabular}\\\\
 We were a little unclear about if the records that are undone are removed from the log or if they are kept there, but the CLR record indicates that the record has been rolled back. We think that a log should never delete a record, once something has been logged that information should not be lost, so we show the log with the CLR to indicate that the records have been undone.
 
 \section{Programming task}
@@ -154,7 +154,7 @@ In the reporting of the metrics, we add up the total number of interactions, the
 Figure 1 shows the throughput at various amounts of concurrent clients when running the test locally and using RPC. Since the number for the local measurements are so much greater than the RPC ones it is hard to see the trends for RPC but they are roughly the same as for the local measurements except smoother due to the overhead RPC adds. From this plot it looks as if the throughput initially increases as the number of clients increases, but at a certain point the number of clients starts to reduce the overall throughput. This is to be expected as initially there will be a gain in throughput as one client will be able to utilize the wasted throughput that could be achieved when another client is not accessing the bookstore. However as more clients are added the potential wasted time from waiting for the bookstore to become available starts to hurt the overall throughput. 
 The plot also shows an outlier in the data for the local measurement at 45 clients. Such outliers can be explained by the machine running the test running other applications in the background that might take up or free resources at various points. Had we run the measurement with an increment at intervals of 1 client instead of 5 the curve would probably have become much smoother and such outliers would stand out less but the time needed to run the measurement would also become much greater.\\
 \textbf{latency}
- Figure 2 shows the latency at various amounts of concurrent clients when running the test locally and using RPC.
+ Figure 2 shows the latency at various amounts of concurrent clients when running the test locally and using RPC. Again the numbers for one measurement are much greater than the others, in this case RPC is greather than the local measurements. But here the trend does not look like it is the same. The increase in latency for the local measurements looks to be about linear from the data. At 10 clients the latency is 1 ms per instruction and at 100 clients the latency is roughly 10 ms per instruction. The Latency for RPC on the other hand looks to be slowly growing exponentially. This could be because the overhead added by RPC means that fewer clients are needed before the tendency for exponential growth is visible, but we need to go beyond 100 clients to see the same tendency in the local measurements.
 
 {\centering
 \begin{figure}
